@@ -10,6 +10,11 @@ class Test:
         self.tl_time = 1  # time in sec
         self.ml_memory = 16 * 1024  # in kB 
 
+    def create_file(self, text, output_file_name):
+        with open(output_file_name, 'w') as inp:
+            inp.write(text)
+            inp.close()
+
     def compile_С(self, name_file, out_name="a.out"):
         proc = sp.Popen(["g++", "-std=c++17", name_file, "-o", out_name], stdout=sp.PIPE, stderr=sp.PIPE)
         output, err = proc.communicate()
@@ -77,7 +82,16 @@ class Test:
 
 
 test = Test()
-print(test.compile_pas("main.pas"))
+# test.create_file("""#include <iostream>
+# using namespace std;
+# int main(){
+#     int a, b;
+#     cin >> a >> b;
+#     cout << a + b;
+#     return 0;
+#     }""", "text.cpp")
+# print(test.compile_С("text.cpp", 'out'))
+# print(test.run_all_tests("tests", "out"))
 # print([test.get_ans('tests/0.a')])
 # print(test.mem("23229"))
 # print(test.run_one_test("tests/0", 'tests/0.a', 'a.out'))
