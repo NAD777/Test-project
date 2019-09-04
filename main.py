@@ -10,8 +10,21 @@ class Test:
         self.tl_time = 1  # time in sec
         self.ml_memory = 16 * 1024  # in kB 
 
-    def compile(self, name_file, out_name="a.out"):
-        sp.call(["g++", "-std=c++2a", name_file, "-o", out_name])
+    def compile_С(self, name_file, out_name="a.out"):
+        proc = sp.Popen(["g++", "-std=c++17", name_file, "-o", out_name], stdout=sp.PIPE, stderr=sp.PIPE)
+        output, err = proc.communicate()
+        if output == b'' and err == b'':
+            return True
+        else:
+            return False
+
+    def compile_pas(self, name_file, out_name="a"):
+        proc = sp.Popen(['fpc', "-TLINUX", name_file, f'-o{out_name}'], stdout=sp.PIPE, stderr=sp.PIPE)
+        output, err = proc.communicate()
+        if (err == b'' or err == b'/usr/bin/ld.bfd: warning: link.res contains output sections; did you forget -T?\n') and 'compiled' in output.decode():
+            return True
+        else:
+            return False
 
     def run_all_tests(self, tests_dir, file_name="a.out"):
         for n, file in enumerate(sorted(filter(lambda x: not x.endswith(".a"), os.listdir(tests_dir)), key=lambda x: int(x))):
@@ -64,9 +77,10 @@ class Test:
 
 
 test = Test()
+print(test.compile_pas("main.pas"))
 # print([test.get_ans('tests/0.a')])
 # print(test.mem("23229"))
 # print(test.run_one_test("tests/0", 'tests/0.a', 'a.out'))
-print(test.run_all_tests("tests"))
+# print(test.run_all_tests("tests"))
 # print(test.run_test("tests/0", "tests/0.a"))
 # test.compile("main.cpp")
