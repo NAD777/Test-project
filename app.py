@@ -1,4 +1,6 @@
 from flask import Flask, render_template, redirect
+from read import read 
+
 
 app = Flask(__name__)
 
@@ -8,7 +10,11 @@ def index():
 
 @app.route('/status/')
 def status():
-    return render_template("index.html")
+    a = read('status')
+    a = list(map(lambda x: x.split('~'), a))
+    return render_template("status.html", content=a)
+
+
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=10001)

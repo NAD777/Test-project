@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+
+{% block head %}
+    <!-- <script>
+    setTimeout(function(){
+        location.reload();
+    }, 1500);
+    </script> -->
+{% endblock %}
+
+{% block content %}
+    <div class="status">
+        {% for i in content %}
+            <p>{{ i[0] }} {{ i[1] }} {{ i[2] }} <br></p>        
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -6,20 +6,28 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="/static/style.css">
     <title>Tester</title>
+    {% block head %}
+
+    {% endblock %}
 </head>
 <body>
+
     <div class="main">
         <div class="header">
-            <a href="/"><h2 class="h2__header"><span class=h2__header__part1>Code</span><span class=h2__header__part2>Problems</span></h2></a>
-            <a class="header__register_btn">Register</a>
+            <a class="a__head_logo" href="/"><h2><span class=h2__header__part1>Code</span><span class=h2__header__part2>Problems</span></h2></a>
+            <a class="header__register" href="/">Register</a>
         </div>
-        <div class="menu-container">
+		
+        <div class="brd">
             <ul class="menu-list">
-                <li><a href="/">Home</a></li>
-                <li><a href="/">Status</a></li>
-                <li><a href="/">Problems</a></li>
-            </ul>
-        </div>
+                <li><a class="menu-element" href="/">Home</a></li>
+                <li><a class="menu-element" href="/status/">Status</a></li>
+                <li><a class="menu-element" href="/">Problems</a></li>
+            </ul>          
+       </div>
+        {% block content %}
+
+        {% endblock %}
     </div>
 </body>
 </html>
