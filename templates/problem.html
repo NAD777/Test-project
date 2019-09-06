@@ -1,0 +1,31 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <div class="problemset">
+        <h2 class="problem-name">{{ data.name }}</h2>
+        <p class=problem-limits>Память: {{data.mem}} Мб. Время: {{data.time}} сек. Сложность: {{ data.difficulty }}</p>
+        <p class="problem-condition">{{ data.condition }}</p>
+        <h3>Входные данные</h1>
+        <p class="problem-input">{{ data.input }}</p>
+        <h3>Выходные данные</h1>
+        <p class="problem-output">{{ data.output }}</p>
+        <h3>Примеры</h3>
+        <table class="problem-test-table" cellpadding="2" cellspacing="1" >
+            <thead>
+                <tr class="tr-head">
+                    <td class="td-head">Input</td>
+                    <td class="td-head">Output</td>
+                </tr>
+            </thead>
+            {% for key, value in data.examples.items() %}
+                <tr class="tr-table">
+                    <td class="td-table">{{ key }}</td>
+                    <td class="td-table">{{ value }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <form action="">
+            <textarea class="input-area" name="textarea" id="" ></textarea>
+        </form>
+    </div>
+{% endblock %}

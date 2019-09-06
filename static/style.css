@@ -31,9 +31,6 @@ body{
     font-size: 20px;
 }
 
-.h2__header__part1{
-    color: #414144;
-}
 
 .header__register{
     color: #0000cc;
@@ -86,6 +83,7 @@ body{
     position: relative;
     text-decoration: none;
     vertical-align: middle;
+    color: #0000cc;
 }
 
 .menu-element:after{
@@ -115,4 +113,42 @@ body{
 
 .problem-test-title{
     text-transform: uppercase;
+}
+
+.problemset h3{
+    text-transform: uppercase;
+}
+
+.problem-test-title{
+    text-transform: uppercase;
+}
+
+.problem-test-table{
+    width: 100%;
+    /* border: 1px solid rgb(185, 185, 185); */
+    border-radius: 5px;
+    overflow: hidden;
+    border-collapse: collapse;
+}
+
+.td-table{
+    border-left: 1px solid rgb(185, 185, 185);  
+    border-right: 1px solid rgb(185, 185, 185);  
+    border-bottom: 1px solid rgb(185, 185, 185);    
+}
+
+.tr-head{
+    background: #98a3ff;
+}
+
+.td-haed{
+    text-transform: uppercase;
+}
+
+.input-area{
+    width: 100%;
+    font-size: 1.2em;
+    resize: none;
+    border: 1px solid rgb(185, 185, 185);
+    border-radius: 5px;
 }
