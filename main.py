@@ -90,8 +90,10 @@ test = Test()
 #     cout << a + b;
 #     return 0;
 #     }""", "text.cpp")
-# print(test.compile_С("text.cpp", 'out'))
-# print(test.run_all_tests("tests", "out"))
+start_time = time.time()
+print(test.compile_С("main.cpp", 'out'))
+print(test.run_all_tests("tests", "out"))
+print(time.time() - start_time)
 # print([test.get_ans('tests/0.a')])
 # print(test.mem("23229"))
 # print(test.run_one_test("tests/0", 'tests/0.a', 'a.out'))
