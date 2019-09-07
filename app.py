@@ -24,10 +24,9 @@ class Problem(db.Model):
     inp = db.Column(db.Text(), unique=False, nullable=False)
     output = db.Column(db.Text(), unique=False, nullable=False)
     examples = db.Column(db.Text(), unique=False, nullable=False)  # rasparse
-   
+
     def __repr__(self):
         return '<Problem {} {}>'.format(self.id, self.name)
-
 
 
 db.create_all()
@@ -115,4 +114,4 @@ def add_send(string):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10002)
+    app.run(host='0.0.0.0', port=10001)
