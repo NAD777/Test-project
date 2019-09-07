@@ -38,6 +38,7 @@ def test_problem():
     print(Problem.query.all())
     return f"{Problem.query.all()}"
 
+
 @app.route("/test-add/")
 def test_add():
     task = Problem(name='A + B',
@@ -114,4 +115,4 @@ def add_send(string):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10001)
+    app.run(host='0.0.0.0', port=10002)
