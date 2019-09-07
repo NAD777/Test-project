@@ -81,22 +81,23 @@ class Test:
                 return "WA"
 
 
-test = Test()
-# test.create_file("""#include <iostream>
-# using namespace std;
-# int main(){
-#     int a, b;
-#     cin >> a >> b;
-#     cout << a + b;
-#     return 0;
-#     }""", "text.cpp")
-start_time = time.time()
-print(test.compile_С("main.cpp", 'out'))
-print(test.run_all_tests("tests", "out"))
-print(time.time() - start_time)
-# print([test.get_ans('tests/0.a')])
-# print(test.mem("23229"))
-# print(test.run_one_test("tests/0", 'tests/0.a', 'a.out'))
-# print(test.run_all_tests("tests"))
-# print(test.run_test("tests/0", "tests/0.a"))
-# test.compile("main.cpp")
+if __name__ == "__main__":
+    test = Test()
+    # test.create_file("""#include <iostream>
+    # using namespace std;
+    # int main(){
+    #     int a, b;
+    #     cin >> a >> b;
+    #     cout << a + b;
+    #     return 0;
+    #     }""", "text.cpp")
+    start_time = time.time()
+    print(test.compile_С("main.cpp", 'out'))
+    print(test.run_all_tests("tests", "out"))
+    print(time.time() - start_time)
+    # print([test.get_ans('tests/0.a')])
+    # print(test.mem("23229"))
+    # print(test.run_one_test("tests/0", 'tests/0.a', 'a.out'))
+    # print(test.run_all_tests("tests"))
+    # print(test.run_test("tests/0", "tests/0.a"))
+    # test.compile("main.cpp")

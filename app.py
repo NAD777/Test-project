@@ -1,6 +1,7 @@
-from flask import Flask, render_template, redirect
-from read import read, get_json, string_to_dict
+from flask import Flask, render_template, redirect, request
+from read import read, string_to_dict
 from flask_sqlalchemy import SQLAlchemy
+from main import Test
 
 
 COL_PROBLEMS_ONE_PAGE = 10
@@ -32,6 +33,14 @@ class Problem(db.Model):
 db.create_all()
 
 
+@app.route('/')
+def index():
+    return render_template("index.html")
+
+
+
+
+
 @app.route("/test-problem/")
 def test_problem():
     print(Problem.query.all())
@@ -54,11 +63,6 @@ def test_add():
     return redirect("/")
 
 
-@app.route('/')
-def index():
-    return render_template("index.html")
-
-
 @app.route('/status/')
 def status():
     a = read('status')
@@ -75,23 +79,33 @@ def problemset(num):
     return render_template("problemset.html", content_table=content)
 
 
-@app.route('/problemset/<num>/')
+@app.route('/problemset/<num>/', methods=['POST', 'GET'])
 def problemset_num(num):
-    n = int(num)
-    problem = Problem.query.filter_by(id=n).first()
-    # content = get_json(f"problems/{num}/cfg.json")
-    # print(type(content))
-    content = {
-        "name": problem.name,
-        "mem": problem.memory,
-        "time": problem.time,
-        "difficulty": problem.difficulty,
-        "condition": problem.condition,
-        "inp": problem.inp,
-        "output": problem.output,
-        "examples":  string_to_dict(problem.examples)
-    }
-    return render_template("problem.html", data=content)
+    if request.method == 'GET': 
+        n = int(num)
+        problem = Problem.query.filter_by(id=n).first()
+        # content = get_json(f"problems/{num}/cfg.json")
+        # print(type(content))
+        content = {
+            "name": problem.name,
+            "mem": problem.memory,
+            "time": problem.time,
+            "difficulty": problem.difficulty,
+            "condition": problem.condition,
+            "inp": problem.inp,
+            "output": problem.output,
+            "examples":  string_to_dict(problem.examples)
+        }
+        return render_template("problem.html", data=content)
+    elif request.method == 'POST':
+        print(request.form['textarea'])
+        print(request.form['lan'])
+        return redirect(f'/problemset/{num}/')
+
+
+# @app.route('/problemset/<num>/', methods=["POST"])
+# def form(num):
+    
 
 
 @app.route('/add/')
