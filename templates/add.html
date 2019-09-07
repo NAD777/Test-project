@@ -9,16 +9,17 @@
 </head>
 <body>
     <div class="container-input">
-        <input class="input" id="id" type="text" placeholder="id">
-        <input class="input" id="name" type="text" placeholder="name">
-        <input class="input" id="mem" type="text" placeholder="mem">
-        <input class="input" id="time" type="text" placeholder="time">
-        <input class="input" id="difficulty" type="text" placeholder="difficulty">
-        <input class="input" id="condition" type="text" placeholder="condition">
-        <input class="input" id="input" type="text" placeholder="input">
-        <input class="input" id="output" type="text" placeholder="output">
-        <input class="input" id="examples" type="text" placeholder="examples">
-        <a href="javascript: goToPage()" class="container-input-btn brd" href="">add</a>
+            <form method="post">
+                <input class="input" id="name" type="text" placeholder="name" name="name">
+                <input class="input" id="mem" type="text" placeholder="mem" name="mem">
+                <input class="input" id="time" type="text" placeholder="time" name="time">
+                <input class="input" id="difficulty" type="text" placeholder="difficulty" name="difficulty">
+                <input class="input" id="condition" type="text" placeholder="condition" name="condition">
+                <input class="input" id="input" type="text" placeholder="input" name="input">
+                <input class="input" id="output" type="text" placeholder="output" name="output">
+                <textarea class="input" id="examples" type="text" placeholder="examples" name="examples"></textarea>
+                <button type="submit" class="btn btn-primary">Отправить</button>
+            </form>
     </div>
     <script>
             function goToPage() {
@@ -43,3 +44,4 @@
     </script>
 </body>
 </html>
+

@@ -38,9 +38,6 @@ def index():
     return render_template("index.html")
 
 
-
-
-
 @app.route("/test-problem/")
 def test_problem():
     print(Problem.query.all())
@@ -71,9 +68,9 @@ def status():
 
 
 @app.route("/problemset/list/<num>/")
-def problemset(num): 
+def problemset(num):
     n = int(num)
-    print(Problem.query.all())  
+    print(Problem.query.all())
     arr = Problem.query.all()[(n - 1) * COL_PROBLEMS_ONE_PAGE:n * COL_PROBLEMS_ONE_PAGE]
     content = [(el.id, el.name, el.difficulty) for el in arr]
     return render_template("problemset.html", content_table=content)
@@ -81,7 +78,7 @@ def problemset(num):
 
 @app.route('/problemset/<num>/', methods=['POST', 'GET'])
 def problemset_num(num):
-    if request.method == 'GET': 
+    if request.method == 'GET':
         n = int(num)
         problem = Problem.query.filter_by(id=n).first()
         # content = get_json(f"problems/{num}/cfg.json")
@@ -103,28 +100,39 @@ def problemset_num(num):
         return redirect(f'/problemset/{num}/')
 
 
-# @app.route('/problemset/<num>/', methods=["POST"])
-# def form(num):
-    
-
-
-@app.route('/add/')
+@app.route('/add/', methods=["POST", 'GET'])
 def add():
-    return render_template("add.html")
-
-
-@app.route('/add/<string>')
-def add_send(string):
-    # return string
-    id, name, memory, time, difficulty, \
-            condition, inp, output, examples = map(str, string.split("~"))
-
-    prm = Problem(name=name, memory=int(memory), time=int(time), 
+    if request.method == 'GET':
+        return render_template("add.html")
+    elif request.method == 'POST':
+        name = request.form['name']
+        memory = request.form['mem']
+        time = request.form['time']
+        difficulty = request.form['difficulty']
+        condition = request.form['condition']
+        inp = request.form['input']
+        output = request.form['output']
+        examples = request.form['examples'].replace("\r\n", '~')
+        prm = Problem(name=name, memory=int(memory), time=int(time), 
             difficulty=int(difficulty), condition=condition, inp=inp, 
              output=output, examples=examples)
-    db.session.add(prm)
-    db.session.commit()
-    return redirect('/add/')
+        db.session.add(prm)
+        db.session.commit()
+        return redirect("/add/")
+
+
+# @app.route('/add/<string>')
+# def add_send(string):
+#     # return string
+#     id, name, memory, time, difficulty, \
+#             condition, inp, output, examples = map(str, string.split("~"))
+
+#     prm = Problem(name=name, memory=int(memory), time=int(time), 
+#             difficulty=int(difficulty), condition=condition, inp=inp, 
+#              output=output, examples=examples)
+#     db.session.add(prm)
+#     db.session.commit()
+#     return redirect('/add/')
 
 
 if __name__ == '__main__':
