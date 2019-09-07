@@ -123,7 +123,7 @@ body{
     text-transform: uppercase;
 }
 
-.problem-test-table{
+.problem-test-table, .table-problemset{
     width: 100%;
     /* border: 1px solid rgb(185, 185, 185); */
     border-radius: 5px;
@@ -139,10 +139,15 @@ body{
 
 .tr-head{
     background: #98a3ff;
+    
 }
 
-.td-haed{
+.td-head{
     text-transform: uppercase;
+    font-size: 12pt;
+    font-weight: bold;
+    color:white;
+    text-shadow: 1px 1px 1px #000;
 }
 
 .input-area{
@@ -151,4 +156,57 @@ body{
     resize: none;
     border: 1px solid rgb(185, 185, 185);
     border-radius: 5px;
+}
+
+.container-input{
+    display: flex;
+    flex-direction: column;
+}
+
+.input{
+    margin-top: 20px;
+    width: 100%;
+}
+
+.container-input-btn{
+    color: black;
+    max-width: 100px;
+    text-decoration: none;
+    margin: 20px auto 0;
+}
+
+.container-input-btn:hover{
+    background-color: orangered;
+    color: white;
+}
+
+/* problemset */
+.problem-id{
+    width: 3%;
+    text-align: center;
+    max-width: 20px;
+    margin: 0 auto
+}
+
+.table-problemset{
+    margin: 5px auto 0;
+    max-width: 100%;
+}
+
+.problem-difficulty{
+    width: 10%;
+    max-width: 100px;
+    text-align: center;
+}
+
+.problem-name{
+    padding-left: 5px; 
+}
+
+.problem-name a{
+    text-decoration: none;
+}
+
+.problem-name:hover{
+    text-decoration: underline;
 }

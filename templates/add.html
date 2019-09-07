@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container-input">
+        <input class="input" id="id" type="text" placeholder="id">
+        <input class="input" id="name" type="text" placeholder="name">
+        <input class="input" id="mem" type="text" placeholder="mem">
+        <input class="input" id="time" type="text" placeholder="time">
+        <input class="input" id="difficulty" type="text" placeholder="difficulty">
+        <input class="input" id="condition" type="text" placeholder="condition">
+        <input class="input" id="input" type="text" placeholder="input">
+        <input class="input" id="output" type="text" placeholder="output">
+        <input class="input" id="examples" type="text" placeholder="examples">
+        <a href="javascript: goToPage()" class="container-input-btn brd" href="">add</a>
+    </div>
+    <script>
+            function goToPage() {
+                var id = document.getElementById('id').value;
+                var name = document.getElementById('name').value;
+                var mem = document.getElementById('mem').value;
+                var time = document.getElementById('time').value;
+                var difficulty = document.getElementById('difficulty').value;
+                var condition = document.getElementById('condition').value;
+                var input = document.getElementById('input').value;
+                var output = document.getElementById('output').value;
+                var examples = document.getElementById('examples').value;
+                // console.log(typeof(examples))
+                var url = id + "~" + name + "~" + mem + "~" + time + "~" + difficulty + "~" + condition + "~" + input + "~" + output + "~" + examples;
+                console.log(url)
+                // if (url !== "~~~~~~~") { 
+                console.log(url);
+                document.location.href = "/add/" + url;
+            
+                // }
+            }
+    </script>
+</body>
+</html>
