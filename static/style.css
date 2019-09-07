@@ -150,12 +150,17 @@ body{
     text-shadow: 1px 1px 1px #000;
 }
 
+.td-fist{
+    padding-left: 3px;
+}
+
 .input-area{
     width: 100%;
     font-size: 1.2em;
     resize: none;
     border: 1px solid rgb(185, 185, 185);
     border-radius: 5px;
+    height: 200px;
 }
 
 .container-input{

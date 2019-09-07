@@ -6,6 +6,7 @@ from main import Test
 
 COL_PROBLEMS_ONE_PAGE = 10
 
+
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
@@ -30,8 +31,18 @@ class Problem(db.Model):
         return '<Problem {} {}>'.format(self.id, self.name)
 
 
+class Status(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), unique=False, nullable=False)
+    status = db.Column(db.String(255), unique=False, nullable=False)
+
+    def __repr__(self):
+        return '<Status {} {}>'.format(self.id, self.n, self.name, self.status)
+
+
 db.create_all()
 
+FOR_TEST_COMPILE = 1
 
 @app.route('/')
 def index():
@@ -97,6 +108,11 @@ def problemset_num(num):
     elif request.method == 'POST':
         print(request.form['textarea'])
         print(request.form['lan'])
+        test = Test()
+        if request.form['lan'] == "CPP":
+            test.create_file(request.form["textarea"], f'source/{FOR_TEST_COMPILE}.cpp')
+            print(test.compile_С(f"source/{FOR_TEST_COMPILE}.cpp", f"programms/{FOR_TEST_COMPILE}"))
+            print(test.run_all_tests(f"problems/1/tests/", f"programms/{FOR_TEST_COMPILE}"))
         return redirect(f'/problemset/{num}/')
 
 
@@ -113,26 +129,12 @@ def add():
         inp = request.form['input']
         output = request.form['output']
         examples = request.form['examples'].replace("\r\n", '~')
-        prm = Problem(name=name, memory=int(memory), time=int(time), 
-            difficulty=int(difficulty), condition=condition, inp=inp, 
+        prm = Problem(name=name, memory=int(memory), time=int(time),
+            difficulty=int(difficulty), condition=condition, inp=inp,
              output=output, examples=examples)
         db.session.add(prm)
         db.session.commit()
         return redirect("/add/")
-
-
-# @app.route('/add/<string>')
-# def add_send(string):
-#     # return string
-#     id, name, memory, time, difficulty, \
-#             condition, inp, output, examples = map(str, string.split("~"))
-
-#     prm = Problem(name=name, memory=int(memory), time=int(time), 
-#             difficulty=int(difficulty), condition=condition, inp=inp, 
-#              output=output, examples=examples)
-#     db.session.add(prm)
-#     db.session.commit()
-#     return redirect('/add/')
 
 
 if __name__ == '__main__':
