@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request
-from read import read, string_to_dict
+from read import string_to_dict
 from flask_sqlalchemy import SQLAlchemy
 from main import Test
 
