@@ -78,7 +78,6 @@ class Test:
                 ret = proc.returncode
                 # print([output.decode().rstrip(), self.get_ans(ans_file)])
                 if output.decode().rstrip() == self.get_ans(ans_file):
-                    print("suka")
                     return False  # if all ok return false :) NICE )) 
                 return "WA"
 

@@ -69,7 +69,7 @@ def test_add():
 @app.route('/status/')
 def status():
     arr = Status.query.all()
-    content = [(el.id, el.name, el.status) for el in arr]
+    content = [(el.id, el.name, el.status) for el in reversed(arr)]
     return render_template("status.html", content=content)
 
 
