@@ -215,3 +215,9 @@ body{
 .problem-name:hover{
     text-decoration: underline;
 }
+
+/* status */
+
+.td-status{
+    text-transform: uppercase;
+}
