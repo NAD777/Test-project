@@ -34,6 +34,8 @@ class Problem(db.Model):
 class Status(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=False, nullable=False)
+    problem = db.Column(db.String(255), unique=False, nullable=False)
+    lan = db.Column(db.String(255), unique=False, nullable=False)
     status = db.Column(db.String(255), unique=False, nullable=False)
 
     def __repr__(self):
@@ -69,7 +71,7 @@ def test_add():
 @app.route('/status/')
 def status():
     arr = Status.query.all()
-    content = [(el.id, el.name, el.status) for el in reversed(arr)]
+    content = [(el.id, el.name, el.problem, el.lan, el.status) for el in reversed(arr)]
     return render_template("status.html", content=content)
 
 
@@ -102,9 +104,9 @@ def problemset_num(num):
         return render_template("problem.html", data=content)
     elif request.method == 'POST':
         # print(request.form['textarea'])
-        # print(request.form['lan'])
+        lan = request.form['lan']
         name = request.form['name']
-        status = Status(name=name, status="comp")
+        status = Status(name=name, status="comp", problem=num, lan=lan)
         db.session.add(status)
         db.session.commit()
         id_status = status.id
