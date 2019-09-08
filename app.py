@@ -37,12 +37,13 @@ class Status(db.Model):
     status = db.Column(db.String(255), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<Status {} {}>'.format(self.id, self.n, self.name, self.status)
+        return '<Status {} {} {} {}>'.format(self.id, self.name, self.status)
 
 
 db.create_all()
 
 FOR_TEST_COMPILE = 1
+
 
 @app.route('/')
 def index():
@@ -57,25 +58,19 @@ def test_problem():
 
 @app.route("/test-add/")
 def test_add():
-    task = Problem(name='A + B',
-                    memory=16,
-                    time=1,
-                    difficulty=1,
-                    condition='А + B',
-                    inp="Два числа",
-                    output="Сумма двух чисел",
-                    examples="1 2~3|3 4~7"
-                    ) 
+    task = Status(name="AU", status="Ok")
+    
     db.session.add(task)
     db.session.commit()
+    print(task.id)
     return redirect("/")
 
 
 @app.route('/status/')
 def status():
-    a = read('status')
-    a = list(map(lambda x: x.split('~'), a))
-    return render_template("status.html", content=a)
+    arr = Status.query.all()
+    content = [(el.id, el.name, el.status) for el in arr]
+    return render_template("status.html", content=content)
 
 
 @app.route("/problemset/list/<num>/")
@@ -106,14 +101,35 @@ def problemset_num(num):
         }
         return render_template("problem.html", data=content)
     elif request.method == 'POST':
-        print(request.form['textarea'])
-        print(request.form['lan'])
+        # print(request.form['textarea'])
+        # print(request.form['lan'])
+        name = request.form['name']
+        status = Status(name=name, status="comp")
+        db.session.add(status)
+        db.session.commit()
+        id_status = status.id
         test = Test()
         if request.form['lan'] == "CPP":
             test.create_file(request.form["textarea"], f'source/{FOR_TEST_COMPILE}.cpp')
-            print(test.compile_С(f"source/{FOR_TEST_COMPILE}.cpp", f"programms/{FOR_TEST_COMPILE}"))
-            print(test.run_all_tests(f"problems/1/tests/", f"programms/{FOR_TEST_COMPILE}"))
-        return redirect(f'/problemset/{num}/')
+            if test.compile_С(f"source/{FOR_TEST_COMPILE}.cpp", f"programms/{FOR_TEST_COMPILE}"):
+                status = Status.query.filter_by(id=id_status).first()
+                status.status = "run"
+                db.session.commit()
+            else:
+                status = Status.query.filter_by(id=id_status).first()
+                status.status = "ce"
+                db.session.commit()
+                return redirect('/status/')
+            ans = test.run_all_tests(f"problems/1/tests/", f"programms/{FOR_TEST_COMPILE}")
+            status = Status.query.filter_by(id=id_status).first()
+            print(ans)
+            if not ans:
+                status.status = "ac"
+                db.session.commit()
+            else:
+                status.status = f"{ans[0]} {ans[1]}"
+                db.session.commit()
+        return redirect('/status/')
 
 
 @app.route('/add/', methods=["POST", 'GET'])

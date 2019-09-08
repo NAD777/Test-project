@@ -18,6 +18,7 @@ class Test:
     def compile_С(self, name_file, out_name="a.out"):
         proc = sp.Popen(["g++", "-std=c++17", name_file, "-o", out_name], stdout=sp.PIPE, stderr=sp.PIPE)
         output, err = proc.communicate()
+        print(err)
         if output == b'' and err == b'':
             return True
         else:
@@ -36,7 +37,7 @@ class Test:
             status = self.run_one_test(f"{tests_dir}/{file}", f"{tests_dir}/{file}.a", file_name)
             if status:
                 return status, n
-        return True
+        return False
 
     def mem(self, pid): # returns mem in kB
         try:
@@ -49,7 +50,7 @@ class Test:
         with open(ans_file, 'r') as content_file:
             return content_file.read().rstrip()
 
-    def run_one_test(self, test_file, ans_file, file_name): # returns False if tests works else Name of error
+    def run_one_test(self, test_file, ans_file, file_name):  # returns False if tests works else Name of error
             with open(test_file) as inp:
                 tl = False
                 ml = False
@@ -77,6 +78,7 @@ class Test:
                 ret = proc.returncode
                 # print([output.decode().rstrip(), self.get_ans(ans_file)])
                 if output.decode().rstrip() == self.get_ans(ans_file):
+                    print("suka")
                     return False  # if all ok return false :) NICE )) 
                 return "WA"
 
