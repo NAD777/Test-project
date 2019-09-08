@@ -86,8 +86,8 @@ def problemset(num):
 
 @app.route('/problemset/<num>/', methods=['POST', 'GET'])
 def problemset_num(num):
+    n = int(num)
     if request.method == 'GET':
-        n = int(num)
         problem = Problem.query.filter_by(id=n).first()
         # content = get_json(f"problems/{num}/cfg.json")
         # print(type(content))
@@ -110,7 +110,8 @@ def problemset_num(num):
         db.session.add(status)
         db.session.commit()
         id_status = status.id
-        test = Test()
+        problem = Problem.query.filter_by(id=n).first()
+        test = Test(tl_time=problem.time, ml_memory=problem.memory)
         if request.form['lan'] == "CPP":
             test.create_file(request.form["textarea"], f'source/{FOR_TEST_COMPILE}.cpp')
             if test.compile_С(f"source/{FOR_TEST_COMPILE}.cpp", f"programms/{FOR_TEST_COMPILE}"):
