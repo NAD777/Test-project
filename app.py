@@ -154,9 +154,9 @@ def problemset_num(num):
             else:
                 status.status = f"{ans[0]} {ans[1]}"
                 db.session.commit()
-            # test.delete_file(f"source/{id_status}.pas")
-            # test.delete_file(f"programms/{id_status}")
-            # test.delete_file(f'programms/{id_status}.o')
+            test.delete_file(f"source/{id_status}.pas")
+            test.delete_file(f"programms/{id_status}")
+            test.delete_file(f'programms/{id_status}.o')
         return redirect('/status/')
 
 
