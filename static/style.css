@@ -8,6 +8,7 @@ h1, h2, h3, h4, h6, p, a{
 
 td {
     font-family: 'Roboto', sans-serif;
+    font-size: 1.1em;
 }
 
 body{
@@ -233,4 +234,8 @@ body{
 
 .wa{
     color: red;
+}
+
+.test-id{
+    text-align: center;
 }

@@ -13,7 +13,7 @@
         <table class="problem-test-table" cellpadding="2" cellspacing="1" >
                 <thead>
                     <tr class="tr-head">
-                        <td class="td-head">#</td>
+                        <td class="td-head test-id">#</td>
                         <td class="td-head">Name</td>
                         <td class="td-head">Task</td>
                         <td class="td-head">Language</td>
@@ -22,7 +22,7 @@
                 </thead>
                 {% for i in content %}
                     <tr class="tr-table">
-                        <td class="td-table">{{ i[0] }}</td>
+                        <td class="td-table test-id">{{ i[0] }}</td>
                         <td class="td-table">{{ i[1] }}</td>
                         <td class="td-table problem-name"><a href="/problemset/{{ i[2] }}/">{{ '%04d' | format(i[2]|int) }}</a></td>
                         {% if i[3] == "CPP" %}
