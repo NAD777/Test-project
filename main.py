@@ -3,6 +3,7 @@ import subprocess as sp
 import time
 
 
+
 class Test:
     def __init__(self, tl_time, ml_memory):
         self.tl_time = tl_time  # time in sec
@@ -12,6 +13,9 @@ class Test:
         with open(output_file_name, 'w') as inp:
             inp.write(text)
             inp.close()
+
+    def delete_file(self, path):
+        os.remove(path)
 
     def compile_С(self, name_file, out_name="a.out"):
         proc = sp.Popen(["g++", "-std=c++17", name_file, "-o", out_name], stdout=sp.PIPE, stderr=sp.PIPE)
@@ -77,7 +81,7 @@ class Test:
                 return "RE"
             # print([output.decode().rstrip(), self.get_ans(ans_file)])
             if output.decode().rstrip() == self.get_ans(ans_file):
-                return False  # if all ok return false :) NICE )) 
+                return False  # if all ok return false :) NICE ))
             return "WA"
 
 

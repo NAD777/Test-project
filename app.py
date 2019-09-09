@@ -113,8 +113,8 @@ def problemset_num(num):
         problem = Problem.query.filter_by(id=n).first()
         test = Test(tl_time=problem.time, ml_memory=problem.memory)
         if request.form['lan'] == "CPP":
-            test.create_file(request.form["textarea"], f'source/{FOR_TEST_COMPILE}.cpp')
-            if test.compile_С(f"source/{FOR_TEST_COMPILE}.cpp", f"programms/{FOR_TEST_COMPILE}"):
+            test.create_file(request.form["textarea"], f'source/{id_status}.cpp')
+            if test.compile_С(f"source/{id_status}.cpp", f"programms/{id_status}"):
                 status = Status.query.filter_by(id=id_status).first()
                 status.status = "run"
                 db.session.commit()
@@ -123,7 +123,7 @@ def problemset_num(num):
                 status.status = "ce"
                 db.session.commit()
                 return redirect('/status/')
-            ans = test.run_all_tests(f"problems/1/tests/", f"programms/{FOR_TEST_COMPILE}")
+            ans = test.run_all_tests(f"problems/{n}/tests/", f"programms/{id_status}")
             status = Status.query.filter_by(id=id_status).first()
             print(ans)
             if not ans:
@@ -132,6 +132,8 @@ def problemset_num(num):
             else:
                 status.status = f"{ans[0]} {ans[1]}"
                 db.session.commit()
+            test.delete_file(f"source/{id_status}.cpp")
+            test.delete_file(f"programms/{id_status}")
         return redirect('/status/')
 
 
