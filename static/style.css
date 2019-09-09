@@ -6,6 +6,10 @@ h1, h2, h3, h4, h6, p, a{
     margin: 0;
 }
 
+td {
+    font-family: 'Roboto', sans-serif;
+}
+
 body{
     margin: 0;
     line-height: 1.6;
