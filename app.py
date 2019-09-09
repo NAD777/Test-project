@@ -134,6 +134,29 @@ def problemset_num(num):
                 db.session.commit()
             test.delete_file(f"source/{id_status}.cpp")
             test.delete_file(f"programms/{id_status}")
+        elif request.form['lan'] == "PAS":
+            test.create_file(request.form["textarea"], f'source/{id_status}.pas')
+            if test.compile_pas(f"source/{id_status}.pas", f"programms/{id_status}"):
+                status = Status.query.filter_by(id=id_status).first()
+                status.status = "run"
+                db.session.commit()
+            else:
+                status = Status.query.filter_by(id=id_status).first()
+                status.status = "ce"
+                db.session.commit()
+                return redirect('/status/')
+            ans = test.run_all_tests(f"problems/{n}/tests/", f"programms/{id_status}")
+            status = Status.query.filter_by(id=id_status).first()
+            print(ans)
+            if not ans:
+                status.status = "ac"
+                db.session.commit()
+            else:
+                status.status = f"{ans[0]} {ans[1]}"
+                db.session.commit()
+            # test.delete_file(f"source/{id_status}.pas")
+            # test.delete_file(f"programms/{id_status}")
+            # test.delete_file(f'programms/{id_status}.o')
         return redirect('/status/')
 
 

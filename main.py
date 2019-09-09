@@ -20,7 +20,6 @@ class Test:
     def compile_С(self, name_file, out_name="a.out"):
         proc = sp.Popen(["g++", "-std=c++17", name_file, "-o", out_name], stdout=sp.PIPE, stderr=sp.PIPE)
         output, err = proc.communicate()
-        print(err)
         if output == b'' and err == b'':
             return True
         else:
@@ -29,7 +28,8 @@ class Test:
     def compile_pas(self, name_file, out_name="a"):
         proc = sp.Popen(['fpc', "-TLINUX", name_file, f'-o{out_name}'], stdout=sp.PIPE, stderr=sp.PIPE)
         output, err = proc.communicate()
-        if (err == b'' or err == b'/usr/bin/ld.bfd: warning: link.res contains output sections; did you forget -T?\n') and 'compiled' in output.decode():
+        print(output, err)
+        if (err == b'' or err == b'/usr/bin/ld.bfd: warning: programms/link.res contains output sections; did you forget -T?\n') and 'compiled' in output.decode():
             return True
         else:
             return False
@@ -79,14 +79,14 @@ class Test:
             ret = proc.returncode
             if ret != 0:
                 return "RE"
-            # print([output.decode().rstrip(), self.get_ans(ans_file)])
+            print([output.decode().rstrip(), self.get_ans(ans_file)])
             if output.decode().rstrip() == self.get_ans(ans_file):
                 return False  # if all ok return false :) NICE ))
             return "WA"
 
 
 if __name__ == "__main__":
-    test = Test()
+    test = Test(1, 16)
     # test.create_file("""#include <iostream>
     # using namespace std;
     # int main(){
@@ -95,10 +95,11 @@ if __name__ == "__main__":
     #     cout << a + b;
     #     return 0;
     #     }""", "text.cpp")
-    start_time = time.time()
-    print(test.compile_С("main.cpp", 'out'))
-    print(test.run_all_tests("tests", "out"))
-    print(time.time() - start_time)
+    # start_time = time.time()
+    print(test.compile_pas("source/36.pas"))
+    # print(test.compile_С("main.cpp", 'out'))
+    # print(test.run_all_tests("tests", "out"))
+    # print(time.time() - start_time)
     # print([test.get_ans('tests/0.a')])
     # print(test.mem("23229"))
     # print(test.run_one_test("tests/0", 'tests/0.a', 'a.out'))
