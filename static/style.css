@@ -219,6 +219,14 @@ body{
 
 /* status */
 
-.td-status{
+.uppercase{
     text-transform: uppercase;
+}
+
+.accepted{
+    color: green;
+}
+
+.wa{
+    color: red;
 }

@@ -25,8 +25,18 @@
                         <td class="td-table">{{ i[0] }}</td>
                         <td class="td-table">{{ i[1] }}</td>
                         <td class="td-table problem-name"><a href="/problemset/{{ i[2] }}/">{{ '%04d' | format(i[2]|int) }}</a></td>
-                        <td class="td-table">{{ i[3] }}</td>
-                        <td class="td-table td-status">{{ i[4] }}</td>
+                        {% if i[3] == "CPP" %}
+                        <td class="td-table">C++</td>
+                        {% elif i[3] == "PAS" %}
+                        <td class="td-table">Pascal ABC</td>
+                        {% else %}
+                        <td class="td-table">No lan selected </td>
+                        {% endif %}
+                        {% if i[4] == "ac" %}
+                        <td class="td-table accepted">Accepted</td>
+                        {% else %}
+                        <td class="td-table uppercase wa">{{ i[4] }}</td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </table>       
