@@ -157,7 +157,12 @@ body{
 }
 
 .td-fist{
+    text-align: center;
     padding-left: 3px;
+}
+
+.td-diff{
+    text-align: center;
 }
 
 .input-area{
