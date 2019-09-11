@@ -3,7 +3,6 @@ import subprocess as sp
 import time
 
 
-
 class Test:
     def __init__(self, tl_time, ml_memory):
         self.tl_time = tl_time  # time in sec
