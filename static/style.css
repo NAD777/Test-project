@@ -1,6 +1,11 @@
 *, *::after, *::before{
     box-sizing: border-box;
 }
+.logo {
+    display: block;
+    max-width: 6%;
+    max-height: 6%;
+}
 
 h1, h2, h3, h4, h6, p, a{
     margin: 0;
