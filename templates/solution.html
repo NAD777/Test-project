@@ -8,7 +8,11 @@
         <p>NAME OF USER: {{ content[1] }}</p>
         <p>NUM TASK: {{ content[2] }}</p> 
         <p>LANGUAGE: {{ content[3] }}</p>
-        <p>STATUS: {{ content[4] }}</p> 
+        {% if content[4] == "ac" %}
+        <p>STATUS: <span class="accepted">Accepted</span> </p>
+        {% else %}
+        <p>STATUS: <span class="uppercase wa">{{ content[4] }}</span> </p>
+        {% endif %}
         <p>CODE:</p> 
         <div class="spoiler-content">
             <pre class="prettyprint">
