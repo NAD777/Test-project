@@ -249,3 +249,11 @@ body{
 .test-id{
     text-align: center;
 }
+
+.spoiler-content {
+    border: 1px solid gray;
+    background-color:#def;
+    border-radius: 5px;
+    padding: 5px;
+    margin-top: 5px;
+}

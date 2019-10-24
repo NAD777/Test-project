@@ -1,5 +1,7 @@
 {% extends 'index.html' %}
-
+{% block head %}
+    
+{% endblock %}
 {% block content %}
     <div class="problemset">
         <h2>{{ data.name }}</h2>
@@ -25,7 +27,7 @@
             {% endfor %}
         </table>
         <form method="post">
-                <textarea placeholder="Your code here:" class="input-area" name="textarea" id=""></textarea>
+                <textarea placeholder="Your code here:" class="input-area" name="textarea" id="textarea"></textarea>
                     <select class="form-control" id="classSelect" name="lan">
                         <option value="cpp">C++</option>
                         <option value="pas">Pascal ABC</option>

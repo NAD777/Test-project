@@ -1,5 +1,7 @@
 {% extends 'index.html' %}
-
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+{% endblock %}
 {% block content %}
     <div class="status">
         <p>ID POS: {{ content[0] }}</p> 
@@ -8,8 +10,10 @@
         <p>LANGUAGE: {{ content[3] }}</p>
         <p>STATUS: {{ content[4] }}</p> 
         <p>CODE:</p> 
-        {% for i in content[5] %}
-            <p>{{ i }}</p>
-        {% endfor %}                  
+        <div class="spoiler-content">
+            <pre class="prettyprint">
+{{ content[5] }}
+            </pre>
+        </div>                  
     </div>
 {% endblock %}

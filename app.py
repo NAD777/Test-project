@@ -193,9 +193,10 @@ def solution(num):
     n = int(num)
     solution = Status.query.filter_by(id=n).first()
     if solution.code is None:
-        code = ['None']
+        code = 'None'
     else:
-        code = solution.code.split('\n')
+        code = solution.code
+    print(code)
     content = (solution.id, solution.name, solution.problem, solution.lan, solution.status, code)
     return render_template("solution.html", content=content)
 
