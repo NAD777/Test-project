@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <div class="status">
+        <p>ID POS: {{ content[0] }}</p> 
+        <p>NAME OF USER: {{ content[1] }}</p>
+        <p>NUM TASK: {{ content[2] }}</p> 
+        <p>LANGUAGE: {{ content[3] }}</p>
+        <p>STATUS: {{ content[4] }}</p> 
+        <p>CODE:</p> 
+        {% for i in content[5] %}
+            <p>{{ i }}</p>
+        {% endfor %}                  
+    </div>
+{% endblock %}

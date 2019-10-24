@@ -6,10 +6,11 @@ import time
 class Test:
     def __init__(self, tl_time, ml_memory):
         self.tl_time = tl_time  # time in sec
-        self.ml_memory = ml_memory * 1024  # in kB 
+        self.ml_memory = ml_memory * 1024  # in kB
 
     def create_file(self, text, output_file_name):
         with open(output_file_name, 'w') as inp:
+            print(text)
             inp.write(text)
             inp.close()
 
@@ -95,8 +96,8 @@ if __name__ == "__main__":
     #     return 0;
     #     }""", "text.cpp")
     # start_time = time.time()
-    print(test.compile_pas("source/36.pas"))
-    # print(test.compile_С("main.cpp", 'out'))
+    # print(test.compile_pas("source/36.pas"))
+    #print(test.compile_С("main.cpp", 'out'))
     # print(test.run_all_tests("tests", "out"))
     # print(time.time() - start_time)
     # print([test.get_ans('tests/0.a')])

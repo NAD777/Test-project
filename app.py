@@ -37,9 +37,13 @@ class Status(db.Model):
     problem = db.Column(db.String(255), unique=False, nullable=False)
     lan = db.Column(db.String(255), unique=False, nullable=False)
     status = db.Column(db.String(255), unique=False, nullable=False)
+    code = db.Column(db.String(), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<Status {} {} {} {}>'.format(self.id, self.name, self.status)
+        return '<Status {} {} {}>'.format(self.id, self.name, self.status)
+    
+    def __str__(self):
+        return '<Status {} {} {}>\n{}'.format(self.id, self.name, self.status, self.code)
 
 
 db.create_all()
@@ -106,7 +110,7 @@ def problemset_num(num):
         # print(request.form['textarea'])
         lan = request.form['lan']
         name = request.form['name']
-        status = Status(name=name, status="comp", problem=num, lan=lan)
+        status = Status(name=name, status="comp", problem=num, lan=lan, code=request.form["textarea"])
         db.session.add(status)
         db.session.commit()
         id_status = status.id
@@ -182,6 +186,18 @@ def add():
         db.session.add(prm)
         db.session.commit()
         return redirect("/add/")
+
+
+@app.route("/solution/<num>/")
+def solution(num):
+    n = int(num)
+    solution = Status.query.filter_by(id=n).first()
+    if solution.code is None:
+        code = ['None']
+    else:
+        code = solution.code.split('\n')
+    content = (solution.id, solution.name, solution.problem, solution.lan, solution.status, code)
+    return render_template("solution.html", content=content)
 
 
 if __name__ == '__main__':
