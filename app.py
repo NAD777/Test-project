@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from main import Test
 
 
-COL_PROBLEMS_ONE_PAGE = 10
+COL_PROBLEMS_ONE_PAGE = 30
 
 
 app = Flask(__name__)
@@ -41,7 +41,7 @@ class Status(db.Model):
 
     def __repr__(self):
         return '<Status {} {} {}>'.format(self.id, self.name, self.status)
-    
+
     def __str__(self):
         return '<Status {} {} {}>\n{}'.format(self.id, self.name, self.status, self.code)
 
@@ -65,7 +65,7 @@ def test_problem():
 @app.route("/test-add/")
 def test_add():
     task = Status(name="AU", status="Ok")
-    
+
     db.session.add(task)
     db.session.commit()
     print(task.id)
