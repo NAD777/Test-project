@@ -31,4 +31,3 @@ def get_tests(col, dir):
 
 if __name__ == "__main__":
     get_tests(2, '6')
-    # print(repr(string_to_dict("1 2~3|3 4~7")))

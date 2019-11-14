@@ -97,7 +97,6 @@ if __name__ == "__main__":
     #     }""", "text.cpp")
     # start_time = time.time()
     # print(test.compile_pas("source/36.pas"))
-    #print(test.compile_С("main.cpp", 'out'))
     # print(test.run_all_tests("tests", "out"))
     # print(time.time() - start_time)
     # print([test.get_ans('tests/0.a')])
