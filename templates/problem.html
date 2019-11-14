@@ -19,10 +19,18 @@
                     <td class="td-head">Output</td>
                 </tr>
             </thead>
-            {% for key, value in data.examples.items() %}
+            {% for test, ans in data.examples %}
                 <tr class="tr-table">
-                    <td class="td-table">{{ key }}</td>
-                    <td class="td-table">{{ value }}</td>
+                    <td class="td-table">
+                        {% for el in test %}
+                            <p> {{ el }}</p>
+                        {% endfor %}
+                    </td>
+                    <td class="td-table">
+                        {% for el in ans %}
+                            <p> {{ el }}</p>
+                        {% endfor %}
+                    </td>
                 </tr>
             {% endfor %}
         </table>

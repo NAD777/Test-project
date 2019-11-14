@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request
-from read import string_to_dict
+from read import get_tests
 from flask_sqlalchemy import SQLAlchemy
 from main import Test
 
@@ -103,7 +103,7 @@ def problemset_num(num):
             "condition": problem.condition,
             "inp": problem.inp,
             "output": problem.output,
-            "examples":  string_to_dict(problem.examples)
+            "examples":  get_tests(col=int(problem.examples), dir=num)
         }
         return render_template("problem.html", data=content)
     elif request.method == 'POST':
@@ -202,4 +202,4 @@ def solution(num):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10002)
+    app.run(host='0.0.0.0', port=40000)

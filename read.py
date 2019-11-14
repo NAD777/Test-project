@@ -1,4 +1,5 @@
 import json
+import os
 
 
 def read(name):
@@ -20,5 +21,13 @@ def string_to_dict(string):  # "1 2~3|3 4~7" -> dict("1 2": "3", "3 4": "7")
     return d
 
 
+def get_tests(col, dir):
+    arr = sorted(filter(lambda x: not x.endswith(".a"), os.listdir(f"problems/{dir}/tests")), key=lambda x: int(x))
+    ret = []
+    for i in range(col):
+        ret.append((read(f"problems/{dir}/tests/{arr[i]}"), read(f"problems/{dir}/tests/{arr[i]}.a")))
+    return ret
+
+
 if __name__ == "__main__":
-    print(repr(string_to_dict("1 2~3|3 4~7")))
+    get_tests(2, '6')
