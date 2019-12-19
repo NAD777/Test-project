@@ -53,7 +53,7 @@ FOR_TEST_COMPILE = 1
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template("board.html")
 
 
 @app.route("/test-problem/")
@@ -179,10 +179,10 @@ def add():
         condition = request.form['condition']
         inp = request.form['input']
         output = request.form['output']
-        examples = request.form['examples'].replace("\r\n", '~')
+        # examples = request.form['examples'].replace("\r\n", '~')
         prm = Problem(name=name, memory=int(memory), time=int(time),
             difficulty=int(difficulty), condition=condition, inp=inp,
-             output=output, examples=examples)
+             output=output)
         db.session.add(prm)
         db.session.commit()
         return redirect("/add/")
