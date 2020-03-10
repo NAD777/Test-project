@@ -1,11 +1,11 @@
+import json
+
 from flask import Flask, render_template, redirect, request
 from read import get_tests
 from flask_sqlalchemy import SQLAlchemy
 from main import Test
 
-
 COL_PROBLEMS_ONE_PAGE = 30
-
 
 app = Flask(__name__)
 
@@ -103,7 +103,7 @@ def problemset_num(num):
             "condition": problem.condition,
             "inp": problem.inp,
             "output": problem.output,
-            "examples":  get_tests(col=int(problem.examples), dir=num)
+            "examples": get_tests(col=int(problem.examples), dir=num)
         }
         return render_template("problem.html", data=content)
     elif request.method == 'POST':
@@ -181,8 +181,8 @@ def add():
         output = request.form['output']
         # examples = request.form['examples'].replace("\r\n", '~')
         prm = Problem(name=name, memory=int(memory), time=int(time),
-            difficulty=int(difficulty), condition=condition, inp=inp,
-             output=output)
+                      difficulty=int(difficulty), condition=condition, inp=inp,
+                      output=output)
         db.session.add(prm)
         db.session.commit()
         return redirect("/add/")
@@ -199,6 +199,16 @@ def solution(num):
     print(code)
     content = (solution.id, solution.name, solution.problem, solution.lan, solution.status, code)
     return render_template("solution.html", content=content)
+
+
+@app.route('/status_reload', methods=['POST'])
+def status_reload():
+    data = json.loads(request.data)  # idшники
+    # TODO: В массиве записаны id статусов, которые нужно достать из БД
+    #  и затем вернуть из функции список [{'id': id, 'status': status}, ...] закодированный в json
+    print(data)
+    respose = {'data': []}  # этот объект необходимо вернуть, закодировав перед этим
+    return json.dumps({'data': [{'id': '75', 'status': 'ac'}, {'id': '73', 'status': 'WA'}]})  # пример
 
 
 if __name__ == '__main__':

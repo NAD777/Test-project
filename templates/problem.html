@@ -1,23 +1,24 @@
 {% extends 'index.html' %}
 {% block head %}
-    
+
 {% endblock %}
 {% block content %}
     <div class="problemset">
         <h2>{{ data.name }}</h2>
-        <p class=problem-limits>Память: {{data.mem}} Мб. Время: {{data.time}} сек. Сложность: {{ data.difficulty }}</p>
+        <p class=problem-limits>Память: {{ data.mem }} Мб. Время: {{ data.time }} сек.
+            Сложность: {{ data.difficulty }}</p>
         <p class="problem-condition">{{ data.condition }}</p>
-        <h3>Входные данные</h1>
+        <h3>Входные данные</h3>
         <p class="problem-input">{{ data.inp }}</p>
-        <h3>Выходные данные</h1>
+        <h3>Выходные данные</h3>
         <p class="problem-output">{{ data.output }}</p>
         <h3>Примеры</h3>
-        <table class="problem-test-table" cellpadding="2" cellspacing="1" >
+        <table class="problem-test-table" cellpadding="2" cellspacing="1">
             <thead>
-                <tr class="tr-head">
-                    <td class="td-head">Input</td>
-                    <td class="td-head">Output</td>
-                </tr>
+            <tr class="tr-head">
+                <td class="td-head">Input</td>
+                <td class="td-head">Output</td>
+            </tr>
             </thead>
             {% for test, ans in data.examples %}
                 <tr class="tr-table">
@@ -35,13 +36,19 @@
             {% endfor %}
         </table>
         <form method="post">
-                <textarea placeholder="Your code here:" class="input-area" name="textarea" id="textarea"></textarea>
-                    <select class="form-control" id="classSelect" name="lan">
-                        <option value="cpp">C++</option>
-                        <option value="pas">Pascal ABC</option>
-                    </select>
+            <textarea placeholder="Your code here:" class="input-area" name="textarea" id="textarea"></textarea>
+            <select class="form-control" id="classSelect" name="lan">
+                <option value="cpp">C++</option>
+                <option value="pas">Pascal ABC</option>
+            </select>
             <input placeholder="Your name" type="text" name="name" id="name">
-            <button type="submit" class="btn btn-primary">Отправить</button>
+            <button type="submit" class="btn btn-primary" id="to-status">Отправить</button>
         </form>
     </div>
+    <script>
+        var btn = document.querySelector('#to-status');
+        btn.addEventListener('click', () => {
+            location.href = '/status';
+        });
+    </script>
 {% endblock %}

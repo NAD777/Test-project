@@ -10,35 +10,37 @@
 <!-- (el.id, el.name, el.problem, el.lan, el.status) -->
 {% block content %}
     <div class="status">
-        <table class="problem-test-table" cellpadding="2" cellspacing="1" >
-                <thead>
-                    <tr class="tr-head">
-                        <td class="td-head test-id">#</td>
-                        <td class="td-head">Name</td>
-                        <td class="td-head">Task</td>
-                        <td class="td-head">Language</td>
-                        <td class="td-head">Status</td>
-                    </tr>
-                </thead>
-                {% for i in content %}
-                    <tr class="tr-table">
-                        <td class="td-table test-id"><a href="/solution/{{ i[0] }}/">{{ i[0] }}</a></td>
-                        <td class="td-table">{{ i[1] }}</td>
-                        <td class="td-table problem-name"><a href="/problemset/{{ i[2] }}/">{{ '%04d' | format(i[2]|int) }}</a></td>
-                        {% if i[3] == "cpp" %}
+        <table class="problem-test-table" cellpadding="2" cellspacing="1">
+            <thead>
+            <tr class="tr-head">
+                <td class="td-head test-id">#</td>
+                <td class="td-head">Name</td>
+                <td class="td-head">Task</td>
+                <td class="td-head">Language</td>
+                <td class="td-head">Status</td>
+            </tr>
+            </thead>
+            {% for i in content %}
+                <tr class="tr-table">
+                    <td class="td-table test-id"><a href="/solution/{{ i[0] }}/" class="status_id">{{ i[0] }}</a></td>
+                    <td class="td-table">{{ i[1] }}</td>
+                    <td class="td-table problem-name"><a
+                            href="/problemset/{{ i[2] }}/">{{ '%04d' | format(i[2]|int) }}</a></td>
+                    {% if i[3] == "cpp" %}
                         <td class="td-table">C++</td>
-                        {% elif i[3] == "pas" %}
+                    {% elif i[3] == "pas" %}
                         <td class="td-table">Pascal ABC</td>
-                        {% else %}
-                        <td class="td-table">No lan selected </td>
-                        {% endif %}
-                        {% if i[4] == "ac" %}
-                        <td class="td-table accepted">Accepted</td>
-                        {% else %}
-                        <td class="td-table uppercase wa">{{ i[4] }}</td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            </table>       
+                    {% else %}
+                        <td class="td-table">No lan selected</td>
+                    {% endif %}
+                    {% if i[4] == "ac" %}
+                        <td class="td-table accepted status_text">Accepted</td>
+                    {% else %}
+                        <td class="td-table uppercase wa status_text">{{ i[4] }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
     </div>
+    <script src="/static/script1.js"></script>
 {% endblock %}
