@@ -8,7 +8,6 @@ from data.db_session import create_session, global_init
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data.forms import RegisterForm, LoginForm
 
-
 COL_PROBLEMS_ONE_PAGE = 30
 
 app = Flask(__name__)
@@ -42,8 +41,8 @@ def login():
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
         return render_template('login.html',
-                            message="Неправильный логин или пароль",
-                            form=form)
+                               message="Неправильный логин или пароль",
+                               form=form)
     return render_template('login.html', form=form)
 
 
@@ -88,7 +87,7 @@ def test_problem():
 @app.route("/test-add/")
 def test_add():
     task = Packages(name="AU", status="Ok")
-    
+
     session = create_session()
     session.add(task)
     session.commit()
@@ -244,9 +243,17 @@ def status_reload():
     #  и затем вернуть из функции список [{'id': id, 'status': status}, ...] закодированный в json
     session = create_session()
     data = data['id']
-    response = {'data': [{"id": str(id_pos), 'status': str(session.query(Packages).filter(Packages.id == int(id_pos)).first().status))} for id_pos in data]}  # этот объект необходимо вернуть, закодировав перед этим
-    # return json.dumps({'data': [{'id': '75', 'status': 'ac'}, {'id': '73', 'status': 'WA'}]})  # пример
-    return json.dump(response)
+    response = {'data': []}
+    for id_pos in data:
+        a = {
+            'id': str(id_pos),
+            'status': str(session.query(Packages).filter(Packages.id == int(id_pos)).first().status)
+        }
+        response['data'].append(a)
+        # return json.dumps({'data': [{'id': '75', 'status': 'ac'}, {'id': '73', 'status': 'WA'}]})  # пример
+    print(response)
+    return json.dumps(response)
+
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=40000)
+    app.run(host='127.0.0.1', port=40000)
