@@ -2,58 +2,81 @@ import json
 
 from flask import Flask, render_template, redirect, request
 from read import get_tests
-from flask_sqlalchemy import SQLAlchemy
 from main import Test
+from data.all_models import Problem, Packages, User
+from data.db_session import create_session, global_init
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from data.forms import RegisterForm, LoginForm
+
 
 COL_PROBLEMS_ONE_PAGE = 30
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'supersecretkey'
+global_init("db/database.sqlite")
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
-
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-
-
-class Problem(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), unique=False, nullable=False)
-    memory = db.Column(db.Integer, unique=False, nullable=False)
-    time = db.Column(db.Integer, unique=False, nullable=False)
-    difficulty = db.Column(db.Integer, unique=False, nullable=False)
-    condition = db.Column(db.Text(), unique=False, nullable=False)
-    inp = db.Column(db.Text(), unique=False, nullable=False)
-    output = db.Column(db.Text(), unique=False, nullable=False)
-    examples = db.Column(db.Text(), unique=False, nullable=False)  # rasparse
-
-    def __repr__(self):
-        return '<Problem {} {}>'.format(self.id, self.name)
-
-
-class Status(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), unique=False, nullable=False)
-    problem = db.Column(db.String(255), unique=False, nullable=False)
-    lan = db.Column(db.String(255), unique=False, nullable=False)
-    status = db.Column(db.String(255), unique=False, nullable=False)
-    code = db.Column(db.String(), unique=False, nullable=False)
-
-    def __repr__(self):
-        return '<Status {} {} {}>'.format(self.id, self.name, self.status)
-
-    def __str__(self):
-        return '<Status {} {} {}>\n{}'.format(self.id, self.name, self.status, self.code)
-
-
-db.create_all()
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 FOR_TEST_COMPILE = 1
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    session = create_session()
+    return session.query(User).get(user_id)
 
 
 @app.route('/')
 def index():
     return render_template("board.html")
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        session = create_session()
+        user = session.query(User).filter((User.email == form.login.data) | (User.nickname == form.login.data)).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/")
+        return render_template('login.html',
+                            message="Неправильный логин или пароль",
+                            form=form)
+    return render_template('login.html', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if form.password.data != form.password_repeat.data:
+            return render_template('register.html',
+                                   form=form,
+                                   message="Пароли не совпадают")
+        session = create_session()
+        if session.query(User).filter((User.email == form.email.data) | (User.nickname == form.nickname.data)).first():
+            return render_template('register.html',
+                                   form=form,
+                                   message="Такой пользователь уже есть")
+        user = User(
+            nickname=form.nickname.data,
+            email=form.email.data
+        )
+        user.set_password(form.password.data)
+        session.add(user)
+        session.commit()
+        return redirect('/login')
+
+    return render_template('register.html', form=form)
 
 
 @app.route("/test-problem/")
@@ -64,17 +87,20 @@ def test_problem():
 
 @app.route("/test-add/")
 def test_add():
-    task = Status(name="AU", status="Ok")
-
-    db.session.add(task)
-    db.session.commit()
+    task = Packages(name="AU", status="Ok")
+    
+    session = create_session()
+    session.add(task)
+    session.commit()
     print(task.id)
     return redirect("/")
 
 
 @app.route('/status/')
 def status():
-    arr = Status.query.all()
+    session = create_session()
+    arr = session.query(Packages).all()
+    # print(arr)
     content = [(el.id, el.name, el.problem, el.lan, el.status) for el in reversed(arr)]
     return render_template("status.html", content=content)
 
@@ -82,8 +108,9 @@ def status():
 @app.route("/problemset/list/<num>/")
 def problemset(num):
     n = int(num)
-    print(Problem.query.all())
-    arr = Problem.query.all()[(n - 1) * COL_PROBLEMS_ONE_PAGE:n * COL_PROBLEMS_ONE_PAGE]
+    # print(Problem.query.all())
+    session = create_session()
+    arr = session.query(Problem).all()[(n - 1) * COL_PROBLEMS_ONE_PAGE:n * COL_PROBLEMS_ONE_PAGE]
     content = [(el.id, el.name, el.difficulty) for el in arr]
     return render_template("problemset.html", content_table=content)
 
@@ -91,8 +118,10 @@ def problemset(num):
 @app.route('/problemset/<num>/', methods=['POST', 'GET'])
 def problemset_num(num):
     n = int(num)
+    session = create_session()
     if request.method == 'GET':
-        problem = Problem.query.filter_by(id=n).first()
+        # problem = Problem.query.filter_by(id=n).first()
+        problem = session.query(Problem).filter(Problem.id == n).first()
         # content = get_json(f"problems/{num}/cfg.json")
         # print(type(content))
         content = {
@@ -103,63 +132,67 @@ def problemset_num(num):
             "condition": problem.condition,
             "inp": problem.inp,
             "output": problem.output,
-            "examples": get_tests(col=int(problem.examples), dir=num)
+            "examples": get_tests(col=int(problem.col_examples), dir=num)
         }
         return render_template("problem.html", data=content)
     elif request.method == 'POST':
-        # print(request.form['textarea'])
+        # print(request.form['textarea'])        
         lan = request.form['lan']
-        name = request.form['name']
-        status = Status(name=name, status="comp", problem=num, lan=lan, code=request.form["textarea"])
-        db.session.add(status)
-        db.session.commit()
+        name = current_user.nickname
+        status = Packages(name=name, status="comp", problem=num, lan=lan, code=request.form["textarea"])
+        session.add(status)
+        # current_user.packages.append(status)
+        # session.merge(current_user)
+        session.commit()
         id_status = status.id
-        problem = Problem.query.filter_by(id=n).first()
+        print("#####!!!", id_status)
+        problem = session.query(Problem).filter(Problem.id == n).first()
         test = Test(tl_time=problem.time, ml_memory=problem.memory)
         # TODO: REFACTOR THIS PART OF CODE
         if lan == "cpp":
             test.create_file(request.form["textarea"], f'source/{id_status}.cpp')
             if test.compile_С(f"source/{id_status}.cpp", f"programms/{id_status}"):
-                status = Status.query.filter_by(id=id_status).first()
+                # status = Packages.query.filter_by(id=id_status).first()
+                status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "run"
-                db.session.commit()
+                session.commit()
             else:
-                status = Status.query.filter_by(id=id_status).first()
+                status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "ce"
                 test.delete_file(f"source/{id_status}.cpp")
-                db.session.commit()
+                session.commit()
                 return redirect('/status/')
             ans = test.run_all_tests(f"problems/{n}/tests/", f"programms/{id_status}")
-            status = Status.query.filter_by(id=id_status).first()
+            status = session.query(Packages).filter(Packages.id == id_status).first()
             if not ans:
                 status.status = "ac"
-                db.session.commit()
+                session.commit()
             else:
                 status.status = f"{ans[0]} {ans[1]}"
-                db.session.commit()
+                session.commit()
             test.delete_file(f"source/{id_status}.cpp")
             test.delete_file(f"programms/{id_status}")
         elif lan == "pas":
             test.create_file(request.form["textarea"], f'source/{id_status}.pas')
             if test.compile_pas(f"source/{id_status}.pas", f"programms/{id_status}"):
-                status = Status.query.filter_by(id=id_status).first()
+                status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "run"
-                db.session.commit()
+                session.commit()
             else:
-                status = Status.query.filter_by(id=id_status).first()
+                status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "ce"
                 test.delete_file(f"source/{id_status}.pas")
-                db.session.commit()
+                session.commit()
                 return redirect('/status/')
             ans = test.run_all_tests(f"problems/{n}/tests/", f"programms/{id_status}")
-            status = Status.query.filter_by(id=id_status).first()
+            status = session.query(Packages).filter(Packages.id == id_status).first()
             print(ans)
             if not ans:
                 status.status = "ac"
-                db.session.commit()
+                session.commit()
             else:
                 status.status = f"{ans[0]} {ans[1]}"
-                db.session.commit()
+                session.commit()
             test.delete_file(f"source/{id_status}.pas")
             test.delete_file(f"programms/{id_status}")
             test.delete_file(f'programms/{id_status}.o')
@@ -183,15 +216,18 @@ def add():
         prm = Problem(name=name, memory=int(memory), time=int(time),
                       difficulty=int(difficulty), condition=condition, inp=inp,
                       output=output)
-        db.session.add(prm)
-        db.session.commit()
+        session = create_session()
+        session.add(prm)
+        session.commit()
         return redirect("/add/")
 
 
 @app.route("/solution/<num>/")
 def solution(num):
     n = int(num)
-    solution = Status.query.filter_by(id=n).first()
+    session = create_session()
+    # solution = Packages.query.filter_by(id=n).first()
+    solution = session.query(Packages).filter(Packages.id == n).first()
     if solution.code is None:
         code = 'None'
     else:
@@ -206,10 +242,11 @@ def status_reload():
     data = json.loads(request.data)  # idшники
     # TODO: В массиве записаны id статусов, которые нужно достать из БД
     #  и затем вернуть из функции список [{'id': id, 'status': status}, ...] закодированный в json
-    print(data)
-    respose = {'data': []}  # этот объект необходимо вернуть, закодировав перед этим
-    return json.dumps({'data': [{'id': '75', 'status': 'ac'}, {'id': '73', 'status': 'WA'}]})  # пример
-
+    session = create_session()
+    data = data['id']
+    response = {'data': [{"id": str(id_pos), 'status': str(session.query(Packages).filter(Packages.id == int(id_pos)).first().status))} for id_pos in data]}  # этот объект необходимо вернуть, закодировав перед этим
+    # return json.dumps({'data': [{'id': '75', 'status': 'ac'}, {'id': '73', 'status': 'WA'}]})  # пример
+    return json.dump(response)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=40000)

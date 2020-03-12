@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap&subset=cyrillic" rel="stylesheet">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -34,7 +35,20 @@
         <div class="header">
             <a class="a__head_logo" href="/"><h2><span class=h2__header__part1>Code</span><span class=h2__header__part2>Problems</span></h2></a>
             <!-- <img class="logo" src="/static/logo.png" alt=""> -->
-            <a style="display:none;" class="header__register" href="/">Register</a>
+            {% if current_user.is_authenticated %}
+            <div>
+                <a href="/">{{ current_user.nickname }}</a>
+                |
+                <a href="/logout">Logout</a>
+            </div>
+            {% else %}
+            <div>
+                <a href="/login">Login</a>
+                |
+                <a href="/register">Register</a>
+            </div>
+            {% endif %}
+            
         </div>
 		
         <div class="brd">
