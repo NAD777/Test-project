@@ -134,76 +134,69 @@ def problemset_num(num):
             "examples": get_tests(col=int(problem.col_examples), dir=num)
         }
         return render_template("problem.html", data=content)
-
-
-@app.route('/testing/<num>/')
-def testing(num):
-    n = int(num)
-    session = create_session()
-
-    lan = request.form['lan']
-    text = request.form["textarea"]
-
-    name = current_user.nickname
-    status = Packages(name=name, status="comp", problem=num, lan=lan, code=text)
-    session.add(status)
-    # current_user.packages.append(status)
-    # session.merge(current_user)
-    session.commit()
-    id_status = status.id
-    print("#####!!!", id_status)
-    problem = session.query(Problem).filter(Problem.id == n).first()
-    test = Test(tl_time=problem.time, ml_memory=problem.memory)
-    # TODO: REFACTOR THIS PART OF CODE
-    if lan == "cpp":
-        test.create_file(request.form["textarea"], f'source/{id_status}.cpp')
-        if test.compile_С(f"source/{id_status}.cpp", f"programms/{id_status}"):
-            # status = Packages.query.filter_by(id=id_status).first()
+    elif request.method == 'POST':
+        # print(request.form['textarea'])        
+        lan = request.form['lan']
+        name = current_user.nickname
+        status = Packages(name=name, status="comp", problem=num, lan=lan, code=request.form["textarea"])
+        session.add(status)
+        # current_user.packages.append(status)
+        # session.merge(current_user)
+        session.commit()
+        id_status = status.id
+        print("#####!!!", id_status)
+        problem = session.query(Problem).filter(Problem.id == n).first()
+        test = Test(tl_time=problem.time, ml_memory=problem.memory)
+        # TODO: REFACTOR THIS PART OF CODE
+        if lan == "cpp":
+            test.create_file(request.form["textarea"], f'source/{id_status}.cpp')
+            if test.compile_С(f"source/{id_status}.cpp", f"programms/{id_status}"):
+                # status = Packages.query.filter_by(id=id_status).first()
+                status = session.query(Packages).filter(Packages.id == id_status).first()
+                status.status = "run"
+                session.commit()
+            else:
+                status = session.query(Packages).filter(Packages.id == id_status).first()
+                status.status = "ce"
+                test.delete_file(f"source/{id_status}.cpp")
+                session.commit()
+                return redirect('/status/')
+            ans = test.run_all_tests(f"problems/{n}/tests/", f"programms/{id_status}")
             status = session.query(Packages).filter(Packages.id == id_status).first()
-            status.status = "run"
-            session.commit()
-        else:
-            status = session.query(Packages).filter(Packages.id == id_status).first()
-            status.status = "ce"
+            if not ans:
+                status.status = "ac"
+                session.commit()
+            else:
+                status.status = f"{ans[0]} {ans[1]}"
+                session.commit()
             test.delete_file(f"source/{id_status}.cpp")
-            session.commit()
-            return redirect('/status/')
-        ans = test.run_all_tests(f"problems/{n}/tests/", f"programms/{id_status}")
-        status = session.query(Packages).filter(Packages.id == id_status).first()
-        if not ans:
-            status.status = "ac"
-            session.commit()
-        else:
-            status.status = f"{ans[0]} {ans[1]}"
-            session.commit()
-        test.delete_file(f"source/{id_status}.cpp")
-        test.delete_file(f"programms/{id_status}")
-    elif lan == "pas":
-        test.create_file(request.form["textarea"], f'source/{id_status}.pas')
-        if test.compile_pas(f"source/{id_status}.pas", f"programms/{id_status}"):
+            test.delete_file(f"programms/{id_status}")
+        elif lan == "pas":
+            test.create_file(request.form["textarea"], f'source/{id_status}.pas')
+            if test.compile_pas(f"source/{id_status}.pas", f"programms/{id_status}"):
+                status = session.query(Packages).filter(Packages.id == id_status).first()
+                status.status = "run"
+                session.commit()
+            else:
+                status = session.query(Packages).filter(Packages.id == id_status).first()
+                status.status = "ce"
+                test.delete_file(f"source/{id_status}.pas")
+                session.commit()
+                return redirect('/status/')
+            ans = test.run_all_tests(f"problems/{n}/tests/", f"programms/{id_status}")
             status = session.query(Packages).filter(Packages.id == id_status).first()
-            status.status = "run"
-            session.commit()
-        else:
-            status = session.query(Packages).filter(Packages.id == id_status).first()
-            status.status = "ce"
+            print(ans)
+            if not ans:
+                status.status = "ac"
+                session.commit()
+            else:
+                status.status = f"{ans[0]} {ans[1]}"
+                session.commit()
             test.delete_file(f"source/{id_status}.pas")
-            session.commit()
-            return redirect('/status/')
-        ans = test.run_all_tests(f"problems/{n}/tests/", f"programms/{id_status}")
-        status = session.query(Packages).filter(Packages.id == id_status).first()
-        print(ans)
-        if not ans:
-            status.status = "ac"
-            session.commit()
-        else:
-            status.status = f"{ans[0]} {ans[1]}"
-            session.commit()
-        test.delete_file(f"source/{id_status}.pas")
-        test.delete_file(f"programms/{id_status}")
-        test.delete_file(f'programms/{id_status}.o')
-    #####################################################
-    return redirect('/status/')
+            test.delete_file(f"programms/{id_status}")
+            test.delete_file(f'programms/{id_status}.o')
+        #####################################################
+        return redirect('/status/')
 
 
 @app.route('/add/', methods=["POST", 'GET'])

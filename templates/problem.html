@@ -36,18 +36,23 @@
             {% endfor %}
         </table>
         {% if current_user.is_authenticated %}
-            <form>
-                <textarea placeholder="Your code here:" class="input-area" name="textarea" id="textarea"></textarea>
-                <select class="form-control" id="classSelect" name="lan">
-                    <option value="cpp">C++</option>
-                    <option value="pas">Pascal ABC</option>
-                </select>
-                <button type="button" class="btn btn-primary" id="to-status">Отправить</button>
-            </form>
+        <form method="post">
+            <textarea placeholder="Your code here:" class="input-area" name="textarea" id="textarea"></textarea>
+            <select class="form-control" id="classSelect" name="lan">
+                <option value="cpp">C++</option>
+                <option value="pas">Pascal ABC</option>
+            </select>
+            <button type="submit" class="btn btn-primary" id="to-status">Отправить</button>
+        </form>
         {% else %}
-
-            <h4>Для отправки решения задачи необходимо <a href="/register">зарегистрироваться</a> и авторизоваться!</h4>
+        
+        <h4>Для отправки решения задачи необходимо <a href="/register">зарегистрироваться</a> и авторизоваться!</h4>
         {% endif %}
     </div>
-    <script src="/static/script1.js"></script>
+    <script>
+        var btn = document.querySelector('#to-status');
+        btn.addEventListener('click', () => {
+            location.href = '/status';
+        });
+    </script>
 {% endblock %}
