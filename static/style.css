@@ -239,3 +239,16 @@ body{
 pre.prettyprint{
     border: none !important;
 }
+
+/* login or register*/
+
+.roundbox{
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+.btn_submit{
+    height: 2em;
+    color: black;
+}
