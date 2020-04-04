@@ -41,7 +41,10 @@
             </p>
         {% endfor %}
     </p>
-    
+    {{ form.recaptcha }}
+    {% for error in form.recaptcha.errors %}
+            <li style="color: red;">{{ error }}</li>
+    {% endfor %}
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     {{message}}
 </form>

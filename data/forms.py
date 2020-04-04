@@ -1,4 +1,4 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
 from wtforms.validators import DataRequired
 from wtforms.fields.html5 import EmailField
@@ -9,6 +9,7 @@ class RegisterForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     password_repeat = PasswordField('Repeat password', validators=[DataRequired()])
+    recaptcha = RecaptchaField()
     submit = SubmitField('Submit')
 
 

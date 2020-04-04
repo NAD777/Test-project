@@ -12,6 +12,12 @@ COL_PROBLEMS_ONE_PAGE = 30
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecretkey'
+
+app.config['RECAPTCHA_USE_SSL'] = False
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6LeLreYUAAAAAE8DCnvD5FY0x6yEvpdYDstaj2BL'
+app.config['RECAPTCHA_PRIVATE_KEY'] = '6LeLreYUAAAAAMusRDSkpYeHUagVBjjI3pycTp7t'
+app.config['RECAPTCHA_OPTIONS'] = {'theme': 'black'}
+
 global_init("db/database.sqlite")
 
 login_manager = LoginManager()
@@ -57,6 +63,7 @@ def logout():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
+
         if form.password.data != form.password_repeat.data:
             return render_template('register.html',
                                    form=form,
