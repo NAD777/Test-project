@@ -146,9 +146,9 @@ def problemset_num(num):
         lan = request.form['lan']
         name = current_user.nickname
         status = Packages(name=name, status="comp", problem=num, lan=lan, code=request.form["textarea"])
-        session.add(status)
-        # current_user.packages.append(status)
-        # session.merge(current_user)
+        # session.add(status)
+        current_user.packages.append(status)
+        session.merge(current_user)
         session.commit()
         id_status = status.id
         print("#####!!!", id_status)
@@ -161,17 +161,20 @@ def problemset_num(num):
                 # status = Packages.query.filter_by(id=id_status).first()
                 status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "run"
+                session.merge(current_user)
                 session.commit()
             else:
                 status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "ce"
                 test.delete_file(f"source/{id_status}.cpp")
+                session.merge(current_user)
                 session.commit()
                 return redirect('/status/')
             ans = test.run_all_tests(f"problems/{n}/tests/", f"programms/{id_status}")
             status = session.query(Packages).filter(Packages.id == id_status).first()
             if not ans:
                 status.status = "ac"
+                session.merge(current_user)
                 session.commit()
             else:
                 status.status = f"{ans[0]} {ans[1]}"
@@ -183,11 +186,13 @@ def problemset_num(num):
             if test.compile_pas(f"source/{id_status}.pas", f"programms/{id_status}"):
                 status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "run"
+                session.merge(current_user)
                 session.commit()
             else:
                 status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "ce"
                 test.delete_file(f"source/{id_status}.pas")
+                session.merge(current_user)
                 session.commit()
                 return redirect('/status/')
             ans = test.run_all_tests(f"problems/{n}/tests/", f"programms/{id_status}")
@@ -195,9 +200,11 @@ def problemset_num(num):
             print(ans)
             if not ans:
                 status.status = "ac"
+                session.merge(current_user)
                 session.commit()
             else:
                 status.status = f"{ans[0]} {ans[1]}"
+                session.merge(current_user)
                 session.commit()
             test.delete_file(f"source/{id_status}.pas")
             test.delete_file(f"programms/{id_status}")
