@@ -8,6 +8,7 @@ from data.db_session import create_session, global_init
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data.forms import RegisterForm, LoginForm, AddProblem
 from werkzeug.utils import secure_filename
+
 import os
 
 
@@ -219,7 +220,7 @@ def problemset_num(num):
 @app.route('/add/', methods=["POST", 'GET'])
 def add():
     form = AddProblem()
-    if form.validate_on_submit() or request.method == "POST":
+    if form.validate_on_submit():
         # name = request.form['name']
         # memory = request.form['mem']
         # time = request.form['time']
@@ -235,14 +236,15 @@ def add():
         prm_id = 13
         files = request.files.getlist(form.files.name)
         print(files)
+        os.makedirs(os.path.join(f"problems/{prm_id}/tests/"))
         if files:
             for file_upload in files:
+                file_name = secure_filename(file_upload.filename)
                 file_content = file_upload.stream.read()
-                print(type(file_content), file_content)
-            
-            # f.save(os.path.join(f"problems/{prm_id}/", f.filename))
-            
-            # print(files, type(files))
+                # print(os.path.join(f"problems/{prm_id}/"))
+                # file_upload.save(os.path.join(f"problems/{prm_id}/"), file_name)
+                open(os.path.join(f"problems/{prm_id}/tests/", file_name), 'w').write(file_content.decode('utf-8'))
+                # print(type(file_content), file_content, file_name)
 
         # session = create_session()
         # session.add(prm)
