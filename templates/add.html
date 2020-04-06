@@ -9,16 +9,76 @@
 </head>
 <body>
     <div class="container-input">
-            <form method="post">
-                <input class="input" id="name" type="text" placeholder="name" name="name">
-                <input class="input" id="mem" type="text" placeholder="mem" name="mem">
-                <input class="input" id="time" type="text" placeholder="time" name="time">
-                <input class="input" id="difficulty" type="text" placeholder="difficulty" name="difficulty">
-                <input class="input" id="condition" type="text" placeholder="condition" name="condition">
-                <input class="input" id="input" type="text" placeholder="input" name="input">
-                <input class="input" id="output" type="text" placeholder="output" name="output">
-                <button type="submit" class="btn btn-primary">Добавить</button>
-            </form>
+        <form action="" method="post">
+            
+            {{ form.hidden_tag() }}
+                <p>
+                    {{ form.title.label }}<br>
+                    {{ form.title(class="form-control", type="text") }}<br>
+                    {% for error in form.title.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.mem.label }}<br>
+                    {{ form.mem(class="form-control", type="text") }}<br>
+                    {% for error in form.mem.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.time.label }}<br>
+                    {{ form.time(class="form-control", type="text") }}<br>
+                    {% for error in form.time.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.difficulty.label }}<br>
+                    {{ form.difficulty(class="form-control", type="text") }}<br>
+                    {% for error in form.difficulty.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.condition.label }}<br>
+                    {{ form.condition(class="form-control", type="text") }}<br>
+                    {% for error in form.condition.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.inp.label }}<br>
+                    {{ form.inp(class="form-control", type="text") }}<br>
+                    {% for error in form.inp.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.output.label }}<br>
+                    {{ form.output(class="form-control", type="text") }}<br>
+                    {% for error in form.output.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </p>
+            <p>{{ form.files() }}</p>
+            <p>{{ form.submit(type="submit", class="btn_submit") }}</p>
+            <div>{{ message }}</div>
+        </form>
     </div>
 </body>
 </html>

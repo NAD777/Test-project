@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm, RecaptchaField
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, TextAreaField,  MultipleFileField
 from wtforms.validators import DataRequired
 from wtforms.fields.html5 import EmailField
+from flask_wtf.file import FileField, FileRequired
 
 
 class RegisterForm(FlaskForm):
@@ -18,3 +19,15 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Enter')
+
+
+class AddProblem(FlaskForm):
+    title = StringField('Title')
+    mem = IntegerField('mem')
+    time = IntegerField('time')
+    difficulty = IntegerField('difficulty')
+    condition = TextAreaField('condition')
+    inp = StringField('input data')
+    output = StringField('output data')
+    files = MultipleFileField()
+    submit = SubmitField('Add')

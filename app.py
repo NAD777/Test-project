@@ -6,7 +6,10 @@ from main import Test
 from data.all_models import Problem, Packages, User
 from data.db_session import create_session, global_init
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from data.forms import RegisterForm, LoginForm
+from data.forms import RegisterForm, LoginForm, AddProblem
+from werkzeug.utils import secure_filename
+import os
+
 
 COL_PROBLEMS_ONE_PAGE = 30
 
@@ -215,24 +218,33 @@ def problemset_num(num):
 
 @app.route('/add/', methods=["POST", 'GET'])
 def add():
-    if request.method == 'GET':
-        return render_template("add.html")
-    elif request.method == 'POST':
-        name = request.form['name']
-        memory = request.form['mem']
-        time = request.form['time']
-        difficulty = request.form['difficulty']
-        condition = request.form['condition']
-        inp = request.form['input']
-        output = request.form['output']
-        # examples = request.form['examples'].replace("\r\n", '~')
-        prm = Problem(name=name, memory=int(memory), time=int(time),
-                      difficulty=int(difficulty), condition=condition, inp=inp,
-                      output=output)
-        session = create_session()
-        session.add(prm)
-        session.commit()
+    form = AddProblem()
+    if form.validate_on_submit():
+        # name = request.form['name']
+        # memory = request.form['mem']
+        # time = request.form['time']
+        # difficulty = request.form['difficulty']
+        # condition = request.form['condition']
+        # inp = request.form['input']
+        # output = request.form['output']
+        # # examples = request.form['examples'].replace("\r\n", '~')
+        # prm = Problem(name=name, memory=int(memory), time=int(time),
+        #               difficulty=int(difficulty), condition=condition, inp=inp,
+        #               output=output)
+        
+        prm_id = 13
+        print(1)
+        print(form.files)
+        for files in form.files.data:
+            files_filenames = secure_filename(files.filename)
+            files.save(os.path.join("problems/{prm_id}/", files_filenames))
+            print(files_filenames)
+
+        # session = create_session()
+        # session.add(prm)
+        # session.commit()
         return redirect("/add/")
+    return render_template("add.html", form=form)
 
 
 @app.route("/solution/<num>/")

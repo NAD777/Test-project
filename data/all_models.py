@@ -47,7 +47,7 @@ class User(SqlAlchemyBase, UserMixin):
 class Packages(SqlAlchemyBase):
     __tablename__ = 'packages'
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     name = sqlalchemy.Column(sqlalchemy.String(255), unique=False, nullable=False)
     problem = sqlalchemy.Column(sqlalchemy.String(255), unique=False, nullable=False)
     lan = sqlalchemy.Column(sqlalchemy.String(255), unique=False, nullable=False)
