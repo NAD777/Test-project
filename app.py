@@ -219,7 +219,7 @@ def problemset_num(num):
 @app.route('/add/', methods=["POST", 'GET'])
 def add():
     form = AddProblem()
-    if form.validate_on_submit():
+    if form.validate_on_submit() or request.method == "POST":
         # name = request.form['name']
         # memory = request.form['mem']
         # time = request.form['time']
@@ -233,12 +233,16 @@ def add():
         #               output=output)
         
         prm_id = 13
-        print(1)
-        print(form.files)
-        for files in form.files.data:
-            files_filenames = secure_filename(files.filename)
-            files.save(os.path.join("problems/{prm_id}/", files_filenames))
-            print(files_filenames)
+        files = request.files.getlist(form.files.name)
+        print(files)
+        if files:
+            for file_upload in files:
+                file_content = file_upload.stream.read()
+                print(type(file_content), file_content)
+            
+            # f.save(os.path.join(f"problems/{prm_id}/", f.filename))
+            
+            # print(files, type(files))
 
         # session = create_session()
         # session.add(prm)
