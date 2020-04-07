@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
+{% extends 'index.html' %}
+{% block content %}
     <div class="container-input">
         <form action="" method="post" enctype="multipart/form-data">
             
@@ -75,11 +67,18 @@
                         </div>
                     {% endfor %}
                 </p>
+                <p>
+                    {{ form.col_examples.label }}<br>
+                    {{ form.col_examples(class="form-control", type="text") }}<br>
+                    {% for error in form.col_examples.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </p>
             <p>{{ form.files }}</p>
             <p>{{ form.submit(type="submit", class="btn_submit") }}</p>
             <div>{{ message }}</div>
         </form>
     </div>
-</body>
-</html>
-
+{% endblock %}

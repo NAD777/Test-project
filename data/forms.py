@@ -30,4 +30,5 @@ class AddProblem(FlaskForm):
     inp = StringField('input data')
     output = StringField('output data')
     files = MultipleFileField()
+    col_examples = IntegerField('Col examples')
     submit = SubmitField('Add')

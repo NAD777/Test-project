@@ -111,7 +111,13 @@ def status():
     session = create_session()
     arr = session.query(Packages).all()
     # print(arr)
-    content = [(el.id, el.name, el.problem, el.lan, el.status) for el in reversed(arr)]
+    content = []
+    print(current_user.role)
+    for el in reversed(arr):
+        user_id = el.user_id
+        user_name = el.user_name
+        
+        content.append((el.id, user_name, el.problem, el.lan, el.status, user_id))
     return render_template("status.html", content=content)
 
 
@@ -121,7 +127,7 @@ def problemset(num):
     # print(Problem.query.all())
     session = create_session()
     arr = session.query(Problem).all()[(n - 1) * COL_PROBLEMS_ONE_PAGE:n * COL_PROBLEMS_ONE_PAGE]
-    content = [(el.id, el.name, el.difficulty) for el in arr]
+    content = [(el.id, el.title, el.difficulty) for el in arr]
     return render_template("problemset.html", content_table=content)
 
 
@@ -135,7 +141,7 @@ def problemset_num(num):
         # content = get_json(f"problems/{num}/cfg.json")
         # print(type(content))
         content = {
-            "name": problem.name,
+            "name": problem.title,
             "mem": problem.memory,
             "time": problem.time,
             "difficulty": problem.difficulty,
@@ -148,11 +154,10 @@ def problemset_num(num):
     elif request.method == 'POST':
         # print(request.form['textarea'])        
         lan = request.form['lan']
-        name = current_user.nickname
-        status = Packages(name=name, status="comp", problem=num, lan=lan, code=request.form["textarea"])
-        # session.add(status)
-        current_user.packages.append(status)
-        session.merge(current_user)
+        user_name = current_user.nickname
+        user_id = current_user.id
+        status = Packages(user_name=user_name, status="comp", problem=num, lan=lan, code=request.form["textarea"], user_id=user_id)
+        session.add(status)
         session.commit()
         id_status = status.id
         print("#####!!!", id_status)
@@ -165,20 +170,17 @@ def problemset_num(num):
                 # status = Packages.query.filter_by(id=id_status).first()
                 status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "run"
-                session.merge(current_user)
                 session.commit()
             else:
                 status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "ce"
                 test.delete_file(f"source/{id_status}.cpp")
-                session.merge(current_user)
                 session.commit()
                 return redirect('/status/')
             ans = test.run_all_tests(f"problems/{n}/tests/", f"programms/{id_status}")
             status = session.query(Packages).filter(Packages.id == id_status).first()
             if not ans:
                 status.status = "ac"
-                session.merge(current_user)
                 session.commit()
             else:
                 status.status = f"{ans[0]} {ans[1]}"
@@ -190,13 +192,11 @@ def problemset_num(num):
             if test.compile_pas(f"source/{id_status}.pas", f"programms/{id_status}"):
                 status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "run"
-                session.merge(current_user)
                 session.commit()
             else:
                 status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "ce"
                 test.delete_file(f"source/{id_status}.pas")
-                session.merge(current_user)
                 session.commit()
                 return redirect('/status/')
             ans = test.run_all_tests(f"problems/{n}/tests/", f"programms/{id_status}")
@@ -204,11 +204,9 @@ def problemset_num(num):
             print(ans)
             if not ans:
                 status.status = "ac"
-                session.merge(current_user)
                 session.commit()
             else:
                 status.status = f"{ans[0]} {ans[1]}"
-                session.merge(current_user)
                 session.commit()
             test.delete_file(f"source/{id_status}.pas")
             test.delete_file(f"programms/{id_status}")
@@ -221,19 +219,22 @@ def problemset_num(num):
 def add():
     form = AddProblem()
     if form.validate_on_submit():
-        # name = request.form['name']
-        # memory = request.form['mem']
-        # time = request.form['time']
-        # difficulty = request.form['difficulty']
-        # condition = request.form['condition']
-        # inp = request.form['input']
-        # output = request.form['output']
-        # # examples = request.form['examples'].replace("\r\n", '~')
-        # prm = Problem(name=name, memory=int(memory), time=int(time),
-        #               difficulty=int(difficulty), condition=condition, inp=inp,
-        #               output=output)
-        
-        prm_id = 13
+        title = form.title.data
+        memory = form.mem.data
+        time = form.time.data
+        difficulty = form.difficulty.data
+        condition = form.condition.data
+        inp = form.inp.data
+        output = form.output.data
+        col_examples = form.col_examples.data
+        # examples = request.form['examples'].replace("\r\n", '~')
+        prm = Problem(title=title, memory=int(memory), time=int(time),
+                      difficulty=int(difficulty), condition=condition, inp=inp,
+                      output=output, col_examples=int(col_examples))
+        session = create_session()
+        session.add(prm)
+        session.commit()
+        prm_id = prm.id
         files = request.files.getlist(form.files.name)
         print(files)
         os.makedirs(os.path.join(f"problems/{prm_id}/tests/"))
@@ -246,9 +247,6 @@ def add():
                 open(os.path.join(f"problems/{prm_id}/tests/", file_name), 'w').write(file_content.decode('utf-8'))
                 # print(type(file_content), file_content, file_name)
 
-        # session = create_session()
-        # session.add(prm)
-        # session.commit()
         return redirect("/add/")
     return render_template("add.html", form=form)
 
@@ -264,7 +262,7 @@ def solution(num):
     else:
         code = solution.code
     print(code)
-    content = (solution.id, solution.name, solution.problem, solution.lan, solution.status, code)
+    content = (solution.id, solution.user_name, solution.problem, solution.lan, solution.status, code)
     return render_template("solution.html", content=content)
 
 

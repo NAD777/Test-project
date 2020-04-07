@@ -9,7 +9,7 @@ class Problem(SqlAlchemyBase):
     __tablename__ = 'problems'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    name = sqlalchemy.Column(sqlalchemy.String(255), unique=False, nullable=False)
+    title = sqlalchemy.Column(sqlalchemy.String(255), unique=False, nullable=False)
     memory = sqlalchemy.Column(sqlalchemy.Integer, unique=False, nullable=False)
     time = sqlalchemy.Column(sqlalchemy.Integer, unique=False, nullable=False)
     difficulty = sqlalchemy.Column(sqlalchemy.Integer, unique=False, nullable=False)
@@ -34,8 +34,10 @@ class User(SqlAlchemyBase, UserMixin):
 
     packages = orm.relation("Packages", back_populates='user')
 
+    role = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+
     def __repr__(self):
-        return f"<User> {self.id} {self.surname} {self.name}"
+        return f"<User> {self.id} {self.nickname} {self.email}"
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -48,7 +50,7 @@ class Packages(SqlAlchemyBase):
     __tablename__ = 'packages'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    name = sqlalchemy.Column(sqlalchemy.String(255), unique=False, nullable=False)
+    user_name = sqlalchemy.Column(sqlalchemy.String(255), unique=False, nullable=False)
     problem = sqlalchemy.Column(sqlalchemy.String(255), unique=False, nullable=False)
     lan = sqlalchemy.Column(sqlalchemy.String(255), unique=False, nullable=False)
     status = sqlalchemy.Column(sqlalchemy.String(255), unique=False, nullable=False)
