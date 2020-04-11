@@ -45,8 +45,16 @@
             <button type="submit" class="btn btn-primary" id="to-status">Отправить</button>
         </form>
         {% else %}
-        
         <h4>Для отправки решения задачи необходимо <a href="/register">зарегистрироваться</a> и авторизоваться!</h4>
+        {% endif %}
+        {% if current_user.role == 1 %}
+            <br>
+            <div>
+                <a href="/edit/{{ data.id }}/">Изменить</a> 
+            </div>
+            <div>
+                <a onclick="return confirm('Удалить файл?')" href="/delete/{{ data.id }}/">Удалить</a> 
+            </div>
         {% endif %}
     </div>
     <script>

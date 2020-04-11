@@ -1,6 +1,6 @@
 import json
 
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, abort
 from read import get_tests
 from main import Test
 from data.all_models import Problem, Packages, User
@@ -143,6 +143,7 @@ def problemset_num(num):
         # content = get_json(f"problems/{num}/cfg.json")
         # print(type(content))
         content = {
+            "id": problem.id,
             "name": problem.title,
             "mem": problem.memory,
             "time": problem.time,
@@ -250,7 +251,54 @@ def add():
                 # print(type(file_content), file_content, file_name)
 
         return redirect("/add/")
-    return render_template("add.html", form=form)
+    return render_template("add.html", form=form, input_files=True)
+
+
+@app.route('/edit/<int:num>/', methods=['POST', 'GET'])
+@login_required
+def edit(num):
+    if current_user.role != 1:
+        return redirect('/')
+    form = AddProblem()
+    session = create_session()
+    problem = session.query(Problem).filter(Problem.id == num).first()
+    if not problem:
+        abort(404)
+    if form.validate_on_submit():
+        problem.title = form.title.data
+        problem.memory = form.mem.data
+        problem.time = form.time.data
+        problem.difficulty = form.difficulty.data
+        problem.condition = form.condition.data
+        problem.inp = form.inp.data
+        problem.output = form.output.data
+        problem.col_examples = form.col_examples.data
+
+        session.commit()
+        return redirect(f"/problemset/{num}/")
+    form.title.data = problem.title
+    form.mem.data = problem.memory
+    form.time.data = problem.time
+    form.difficulty.data = problem.difficulty
+    form.condition.data = problem.condition
+    form.inp.data = problem.inp
+    form.output.data = problem.output
+    form.col_examples.data = problem.col_examples
+
+    return render_template("add.html", form=form, input_files=False)
+
+
+@app.route('/delete/<int:num>/', methods=['POST', 'GET'])
+@login_required
+def problem_delete(num):
+    session = create_session()
+    problem = session.query(Problem).filter(Problem.id == num).first()
+    if problem:
+        session.delete(problem)
+        session.commit()
+    else:
+        abort(404)
+    return redirect(f"/problemset/list/1/")
 
 
 @app.route("/solution/<num>/")
@@ -275,14 +323,14 @@ def profile(nickname):
     accepted = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status == 'ac').all()
     ids_accept = set(map(lambda x: int(x.problem), accepted))
     wa = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status.like('WA%')).all()
-    ids_wa = set(map(lambda x: int(x.problem), wa))
+    ids_wa = list(map(lambda x: int(x.problem), wa))
     ml = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status.like('ML%')).all()
-    ids_ml = set(map(lambda x: int(x.problem), ml))
+    ids_ml = list(map(lambda x: int(x.problem), ml))
     tl = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status.like('TL%')).all()
-    ids_tl = set(map(lambda x: int(x.problem), tl))
+    ids_tl = list(map(lambda x: int(x.problem), tl))
     ce = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status == 'ce').all()
-    ids_ce = set(map(lambda x: int(x.problem), ce))
-    all_exceptions = (ids_wa | ids_ml | ids_tl | ids_ce) ^ ids_accept
+    ids_ce = list(map(lambda x: int(x.problem), ce))
+    all_exceptions = (set(ids_wa) | set(ids_ml) | set(ids_tl) | set(ids_ce)) ^ ids_accept
     print(ids_wa, wa)
     return render_template("profile.html", profile=profile, ids_accept=ids_accept, ids_wa=ids_wa, all_exceptions=all_exceptions,
                                             ids_ml=ids_ml, ids_tl=ids_tl, ids_ce=ids_ce)

@@ -22,13 +22,13 @@ class LoginForm(FlaskForm):
 
 
 class AddProblem(FlaskForm):
-    title = StringField('Title')
-    mem = IntegerField('mem')
-    time = IntegerField('time')
-    difficulty = IntegerField('difficulty')
-    condition = TextAreaField('condition')
-    inp = StringField('input data')
-    output = StringField('output data')
+    title = StringField('Title', validators=[DataRequired()])
+    mem = IntegerField('mem', validators=[DataRequired()])
+    time = IntegerField('time', validators=[DataRequired()])
+    difficulty = IntegerField('difficulty', validators=[DataRequired()])
+    condition = TextAreaField('condition', validators=[DataRequired()])
+    inp = StringField('input data', validators=[DataRequired()])
+    output = StringField('output data', validators=[DataRequired()])
     files = MultipleFileField()
-    col_examples = IntegerField('Col examples')
+    col_examples = IntegerField('Col examples', validators=[DataRequired()])
     submit = SubmitField('Add')

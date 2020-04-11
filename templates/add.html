@@ -76,7 +76,9 @@
                         </div>
                     {% endfor %}
                 </p>
-            <p>{{ form.files }}</p>
+            {% if input_files %}
+                <p>{{ form.files }}</p>
+            {% endif %}
             <p>{{ form.submit(type="submit", class="btn_submit") }}</p>
             <div>{{ message }}</div>
         </form>
