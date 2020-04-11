@@ -61,9 +61,9 @@ class Packages(SqlAlchemyBase):
     user = orm.relation('User')
 
     def __repr__(self):
-        return '<Package {} {} {}>'.format(self.id, self.name, self.status)
+        return '<Package {} {} {}>'.format(self.id, self.user_name, self.status)
 
     def __str__(self):
-        return '<Package {} {} {}>\n{}'.format(self.id, self.name, self.status, self.code)
+        return '<Package {} {} {}>\n{}'.format(self.id, self.user_name, self.status, self.code)
 
 

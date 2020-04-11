@@ -37,7 +37,7 @@
             <!-- <img class="logo" src="/static/logo.png" alt=""> -->
             {% if current_user.is_authenticated %}
             <div>
-                <a href="/">{{ current_user.nickname }}</a>
+                <a href="/profile/{{ current_user.nickname }}">{{ current_user.nickname }}</a>
                 |
                 <a href="/logout">Logout</a>
             </div>

@@ -266,6 +266,41 @@ def solution(num):
     return render_template("solution.html", content=content)
 
 
+@app.route("/profile/<nickname>/")
+def profile(nickname):
+    session = create_session()
+    profile = session.query(User).filter(User.nickname == nickname).first()
+    accepted = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status == 'ac').all()
+    ids_accept = set(map(lambda x: int(x.problem), accepted))
+    wa = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status.like('WA%')).all()
+    ids_wa = set(map(lambda x: int(x.problem), wa))
+    ml = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status.like('ML%')).all()
+    ids_ml = set(map(lambda x: int(x.problem), ml))
+    tl = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status.like('TL%')).all()
+    ids_tl = set(map(lambda x: int(x.problem), tl))
+    ce = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status == 'ce').all()
+    ids_ce = set(map(lambda x: int(x.problem), ce))
+    all_exceptions = (ids_wa | ids_ml | ids_tl | ids_ce) ^ ids_accept
+    print(ids_wa, wa)
+    return render_template("profile.html", profile=profile, ids_accept=ids_accept, ids_wa=ids_wa, all_exceptions=all_exceptions,
+                                            ids_ml=ids_ml, ids_tl=ids_tl, ids_ce=ids_ce)
+
+
+@app.route("/profile/<nickname>/all_packeges/")
+def users_packeges(nickname):
+    session = create_session()
+    profile = session.query(User).filter(User.nickname == nickname).first()
+    users_packages = session.query(Packages).filter(Packages.user_id == profile.id).all()
+    content = []
+
+    for el in reversed(users_packages):
+        user_id = el.user_id
+        user_name = el.user_name
+        
+        content.append((el.id, user_name, el.problem, el.lan, el.status, user_id))
+    return render_template("status.html", content=content)
+
+
 @app.route('/status_reload', methods=['POST'])
 def status_reload():
     data = json.loads(request.data)  # idшники

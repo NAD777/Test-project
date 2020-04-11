@@ -1,0 +1,57 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <div class="profile-content">
+        <div>
+            <h1>{{ profile.nickname }}</h1>
+            <div>
+                <a class="profile__links" href="all_packeges">[Все попытки]</a>
+            </div>
+            <p>Решенные задачи ({{ ids_accept|length }}):</p>
+            <div class="tasks-handler">
+                {% for el in ids_accept|sort %}
+                    <a class="profile__task_id" href="/problemset/{{ el }}/"> {{ el }} </a>
+                    &#160;
+                {% endfor %}
+            </div>
+            <p>Нерешенные задачи ({{ all_exceptions|length }}):</p>
+            <div class="tasks-handler">
+                {% for el in all_exceptions|sort %}
+                    <a class="profile__task_id" href="/problemset/{{ el }}/"> {{ el }} </a>
+                    &#160;
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <table class="problem-test-table" cellpadding="2" cellspacing="1">
+                <thead>
+                    <tr class="tr-head">
+                        <td class="td-head">Результат</td>
+                        <td class="td-head">Всего</td>
+                    </tr>
+                </thead>
+                    <tr class="tr-table">
+                        <td class="td-table test-id accepted">Accepted</td>
+                        <td class="td-table test-id">{{ ids_accept|length }}</td>
+                    </tr>
+                    <tr class="tr-table">
+                        <td class="td-table test-id wa">Wrong answer</td>
+                        <td class="td-table test-id">{{ ids_accept|length }}</td>
+                    </tr>
+                    <tr class="tr-table">
+                        <td class="td-table test-id wa">Time limit exceeded</td>  
+                        <td class="td-table test-id">{{ ids_tl|length }}</td>  
+                    </tr>
+                    <tr class="tr-table">
+                        <td class="td-table test-id wa">Compilation error</td>    
+                        <td class="td-table test-id">{{ ids_ce|length }}</td>
+                    </tr>
+                    <tr class="tr-table">
+                        <td class="td-table test-id wa">Memory limit exceeded</td>  
+                        <td class="td-table test-id">{{ ids_ml|length }}</td>  
+                    </tr>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

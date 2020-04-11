@@ -106,10 +106,6 @@ body{
     text-transform: uppercase;
 }
 
-.problem-test-title{
-    text-transform: uppercase;
-}
-
 .problem-test-table, .table-problemset{
     margin: 5px auto 0;
     width: 100%;
@@ -204,15 +200,27 @@ body{
 
 .problem-name{
     padding-left: 5px; 
+    
 }
 
 .problem-name a{
     text-decoration: none;
 }
 
-.problem-name:hover{
+.problem-name a:hover{
     text-decoration: underline;
+    color: red !important;
 }
+
+.problem-nickname a {
+    text-decoration: none;
+}
+
+.problem-nickname a:hover {
+    text-decoration: underline;
+    color: red;
+}
+
 
 /* status */
 
@@ -244,6 +252,15 @@ pre.prettyprint{
     border: none !important;
 }
 
+.current-user-pack a {
+    text-decoration: none;
+}
+
+.current-user-pack a:hover {
+    text-decoration: underline;
+    color: red;
+}
+
 /* login or register*/
 
 .roundbox{
@@ -255,4 +272,40 @@ pre.prettyprint{
 .btn_submit{
     height: 2em;
     color: black;
+}
+
+/* profile */
+
+.profile-content {
+    display: flex;
+    justify-content: space-between; 
+}
+
+.profile__links {
+    text-transform: uppercase;
+    text-decoration: none;
+
+}
+
+.profile__links:hover {
+    text-decoration: underline;
+    color: red;
+}
+
+.tasks-handler {
+    display: flex;
+}
+
+/* .tasks-handler p {
+    white-space: pre-wrap;
+} */
+
+.profile__task_id {
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+.profile__task_id:hover {
+    text-decoration: underline;
+    color: red;
 }

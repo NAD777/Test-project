@@ -24,11 +24,11 @@
                 <tr class="tr-table">
                     <!-- <div>{{ i[5] }}, {{current_user.id}} </div> -->
                     {% if current_user.id == i[5] or current_user.role == 1 %}
-                        <td class="td-table test-id"><a href="/solution/{{ i[0] }}/" class="status_id">{{ i[0] }}</a></td>
+                        <td class="td-table test-id current-user-pack"><a href="/solution/{{ i[0] }}/" class="status_id">{{ i[0] }}</a></td>
                     {% else %}
                     <td class="td-table test-id status_id">{{ i[0] }}</td>
                     {% endif %}
-                    <td class="td-table">{{ i[1] }}</td>
+                    <td class="td-table problem-nickname"><a href="/profile/{{ i[1] }}">{{ i[1] }}</a></td>
                     <td class="td-table problem-name"><a
                             href="/problemset/{{ i[2] }}/">{{ '%04d' | format(i[2]|int) }}</a></td>
                     {% if i[3] == "cpp" %}
