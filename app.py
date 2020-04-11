@@ -112,7 +112,6 @@ def status():
     arr = session.query(Packages).all()
     # print(arr)
     content = []
-    print(current_user.role)
     for el in reversed(arr):
         user_id = el.user_id
         user_name = el.user_name
@@ -125,7 +124,10 @@ def status():
 def problemset(num):
     n = int(num)
     session = create_session()
-    solved_by_user = [int(el.problem) for el in session.query(Packages).filter(Packages.user_id == current_user.id, Packages.status == 'ac').all()]
+    if current_user.is_authenticated:
+        solved_by_user = [int(el.problem) for el in session.query(Packages).filter(Packages.user_id == current_user.id, Packages.status == 'ac').all()]
+    else:
+        solved_by_user = []
     arr = session.query(Problem).all()[(n - 1) * COL_PROBLEMS_ONE_PAGE:n * COL_PROBLEMS_ONE_PAGE]
     content = [(el.id, el.title, el.difficulty) for el in arr]
     return render_template("problemset.html", content_table=content, solved_by_user=solved_by_user)

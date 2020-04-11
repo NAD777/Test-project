@@ -23,7 +23,7 @@
             {% for i in content %}
                 <tr class="tr-table">
                     <!-- <div>{{ i[5] }}, {{current_user.id}} </div> -->
-                    {% if current_user.id == i[5] or current_user.role == 1 %}
+                    {% if current_user.is_authenticated and (current_user.id == i[5] or current_user.role == 1) %}
                         <td class="td-table test-id current-user-pack"><a href="/solution/{{ i[0] }}/" class="status_id">{{ i[0] }}</a></td>
                     {% else %}
                     <td class="td-table test-id status_id">{{ i[0] }}</td>
