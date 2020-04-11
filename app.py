@@ -8,6 +8,8 @@ from data.db_session import create_session, global_init
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data.forms import RegisterForm, LoginForm, AddProblem
 from werkzeug.utils import secure_filename
+from flask_restful import Api
+import users_resource
 
 import os
 
@@ -15,6 +17,10 @@ import os
 COL_PROBLEMS_ONE_PAGE = 30
 
 app = Flask(__name__)
+api = Api(app)
+
+api.add_resource(users_resource.UsersResource, '/api/users/<string:user_name>')
+
 app.config['SECRET_KEY'] = 'supersecretkey'
 
 app.config['RECAPTCHA_USE_SSL'] = False
