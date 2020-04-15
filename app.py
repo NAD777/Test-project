@@ -325,8 +325,8 @@ def profile(nickname):
     ids_tl = list(map(lambda x: int(x.problem), tl))
     ce = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status == 'ce').all()
     ids_ce = list(map(lambda x: int(x.problem), ce))
-    all_exceptions = (set(ids_wa) | set(ids_ml) | set(ids_tl) | set(ids_ce)) ^ ids_accept
-    print(ids_wa, wa)
+    all_exceptions = ((set(ids_wa) | set(ids_ml) | set(ids_tl) | set(ids_ce))) - ids_accept
+    print(ids_wa, wa, all_exceptions, ids_accept)
     return render_template("profile.html", profile=profile, ids_accept=ids_accept, ids_wa=ids_wa, all_exceptions=all_exceptions,
                                             ids_ml=ids_ml, ids_tl=ids_tl, ids_ce=ids_ce)
 
