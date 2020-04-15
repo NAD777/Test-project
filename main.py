@@ -18,7 +18,8 @@ class Test:
         os.remove(path)
 
     def compile_С(self, name_file, out_name="a.out"):
-        proc = sp.Popen(["g++", "-std=c++17", name_file, "-o", out_name], stdout=sp.PIPE, stderr=sp.PIPE)
+        proc = sp.Popen(["g++", "-std=c++17", name_file, "-o", out_name],
+                        stdout=sp.PIPE, stderr=sp.PIPE)
         output, err = proc.communicate()
         if output == b'' and err == b'':
             return True
@@ -26,16 +27,20 @@ class Test:
             return False
 
     def compile_pas(self, name_file, out_name="a"):
-        proc = sp.Popen(['fpc', "-TLINUX", name_file, f'-o{out_name}'], stdout=sp.PIPE, stderr=sp.PIPE)
+        proc = sp.Popen(['fpc', "-TLINUX", name_file, f'-o{out_name}'],
+                        stdout=sp.PIPE, stderr=sp.PIPE)
         output, err = proc.communicate()
         print(output, err)
-        if (err == b'' or err == b'/usr/bin/ld.bfd: warning: programms/link.res contains output sections; did you forget -T?\n') and 'compiled' in output.decode():
+        if (err == b'' or
+            err == b'/usr/bin/ld.bfd: warning: programms/link.res contains output sections;'
+                   b' did you forget -T?\n') and 'compiled' in output.decode():
             return True
         else:
             return False
 
     def run_all_tests(self, tests_dir, file_name="a.out"):
-        for n, file in enumerate(sorted(filter(lambda x: not x.endswith(".a"), os.listdir(tests_dir)), key=lambda x: int(x))):
+        for n, file in enumerate(sorted(filter(lambda x: not x.endswith(".a"),
+                                               os.listdir(tests_dir)), key=lambda x: int(x))):
             status = self.run_one_test(f"{tests_dir}/{file}", f"{tests_dir}/{file}.a", file_name)
             if status:
                 return status, n
@@ -43,7 +48,8 @@ class Test:
 
     def mem(self, pid):  # returns mem in kB
         try:
-            col_mem = sp.check_output([f"cat /proc/{pid}/status | grep -i VMSIZE"], shell=True).rstrip()
+            col_mem = sp.check_output([f"cat /proc/{pid}/status | grep -i VMSIZE"],
+                                      shell=True).rstrip()
             return int(col_mem.decode()[11:-3])
         except BaseException:
             return 0  # todo: refactor it
@@ -52,11 +58,12 @@ class Test:
         with open(ans_file, 'r') as content_file:
             return content_file.read().rstrip()
 
-    def run_one_test(self, test_file, ans_file, file_name):  # returns False if tests works else Name of error
+    def run_one_test(self, test_file, ans_file, file_name):
         with open(test_file) as inp:
             tl = False
             ml = False
-            proc = sp.Popen([f'exec ./{file_name}'], shell=True, stdin=inp, stdout=sp.PIPE, stderr=sp.PIPE)
+            proc = sp.Popen([f'exec ./{file_name}'], shell=True,
+                            stdin=inp, stdout=sp.PIPE, stderr=sp.PIPE)
             time_start = time.time()
             while True:
                 if proc.poll() is None and time.time() - time_start >= self.tl_time:

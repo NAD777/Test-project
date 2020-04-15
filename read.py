@@ -14,10 +14,12 @@ def get_json(path):
 
 
 def get_tests(col, dir):
-    arr = sorted(filter(lambda x: not x.endswith(".a"), os.listdir(f"problems/{dir}/tests")), key=lambda x: int(x))
+    arr = sorted(filter(lambda x: not x.endswith(".a"), os.listdir(f"problems/{dir}/tests")),
+                 key=lambda x: int(x))
     ret = []
     for i in range(min(col, len(arr))):
-        ret.append((read(f"problems/{dir}/tests/{arr[i]}"), read(f"problems/{dir}/tests/{arr[i]}.a")))
+        ret.append((read(f"problems/{dir}/tests/{arr[i]}"),
+                    read(f"problems/{dir}/tests/{arr[i]}.a")))
     return ret
 
 

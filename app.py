@@ -13,7 +13,6 @@ import users_resource
 
 import os
 
-
 COL_PROBLEMS_ONE_PAGE = 30
 
 app = Flask(__name__)
@@ -52,7 +51,8 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         session = create_session()
-        user = session.query(User).filter((User.email == form.login.data) | (User.nickname == form.login.data)).first()
+        user = session.query(User).filter((User.email == form.login.data)
+                                          | (User.nickname == form.login.data)).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
@@ -79,7 +79,8 @@ def register():
                                    form=form,
                                    message="Пароли не совпадают")
         session = create_session()
-        if session.query(User).filter((User.email == form.email.data) | (User.nickname == form.nickname.data)).first():
+        if session.query(User).filter(
+                (User.email == form.email.data) | (User.nickname == form.nickname.data)).first():
             return render_template('register.html',
                                    form=form,
                                    message="Такой пользователь уже есть")
@@ -104,7 +105,7 @@ def status():
     for el in reversed(arr):
         user_id = el.user_id
         user_name = el.user_name
-        
+
         content.append((el.id, user_name, el.problem, el.lan, el.status, user_id))
     return render_template("status.html", content=content)
 
@@ -114,7 +115,9 @@ def problemset(num):
     n = int(num)
     session = create_session()
     if current_user.is_authenticated:
-        solved_by_user = [int(el.problem) for el in session.query(Packages).filter(Packages.user_id == current_user.id, Packages.status == 'ac').all()]
+        solved_by_user = [int(el.problem) for el in
+                          session.query(Packages).filter(Packages.user_id == current_user.id,
+                                                         Packages.status == 'ac').all()]
     else:
         solved_by_user = []
     arr = session.query(Problem).all()[(n - 1) * COL_PROBLEMS_ONE_PAGE:n * COL_PROBLEMS_ONE_PAGE]
@@ -148,14 +151,15 @@ def problemset_num(num):
         lan = request.form['lan']
         user_name = current_user.nickname
         user_id = current_user.id
-        status = Packages(user_name=user_name, status="comp", problem=num, lan=lan, code=request.form["textarea"], user_id=user_id)
+        status = Packages(user_name=user_name, status="comp", problem=num, lan=lan,
+                          code=request.form["textarea"], user_id=user_id)
         session.add(status)
         session.commit()
         id_status = status.id
         print("#####!!!", id_status)
         problem = session.query(Problem).filter(Problem.id == n).first()
         test = Test(tl_time=problem.time, ml_memory=problem.memory)
-        
+
         if lan == "cpp":
             test.create_file(request.form["textarea"], f'source/{id_status}.cpp')
             if test.compile_С(f"source/{id_status}.cpp", f"programms/{id_status}"):
@@ -203,7 +207,7 @@ def problemset_num(num):
             test.delete_file(f"source/{id_status}.pas")
             test.delete_file(f"programms/{id_status}")
             test.delete_file(f'programms/{id_status}.o')
-        
+
         return redirect('/status/')
 
 
@@ -239,7 +243,8 @@ def add():
                 file_content = file_upload.stream.read()
                 # print(os.path.join(f"problems/{prm_id}/"))
                 # file_upload.save(os.path.join(f"problems/{prm_id}/"), file_name)
-                open(os.path.join(f"problems/{prm_id}/tests/", file_name), 'w').write(file_content.decode('utf-8'))
+                open(os.path.join(f"problems/{prm_id}/tests/", file_name), 'w').write(
+                    file_content.decode('utf-8'))
                 # print(type(file_content), file_content, file_name)
 
         return redirect("/add/")
@@ -306,8 +311,8 @@ def solution(num):
         code = 'None'
     else:
         code = solution.code
-    print(code)
-    content = (solution.id, solution.user_name, solution.problem, solution.lan, solution.status, code)
+    content = (solution.id, solution.user_name, solution.problem,
+               solution.lan, solution.status, code)
     return render_template("solution.html", content=content)
 
 
@@ -315,20 +320,26 @@ def solution(num):
 def profile(nickname):
     session = create_session()
     profile = session.query(User).filter(User.nickname == nickname).first()
-    accepted = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status == 'ac').all()
+    accepted = session.query(Packages).filter(Packages.user_id == profile.id,
+                                              Packages.status == 'ac').all()
     ids_accept = set(map(lambda x: int(x.problem), accepted))
-    wa = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status.like('WA%')).all()
+    wa = session.query(Packages).filter(Packages.user_id == profile.id,
+                                        Packages.status.like('WA%')).all()
     ids_wa = list(map(lambda x: int(x.problem), wa))
-    ml = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status.like('ML%')).all()
+    ml = session.query(Packages).filter(Packages.user_id == profile.id,
+                                        Packages.status.like('ML%')).all()
     ids_ml = list(map(lambda x: int(x.problem), ml))
-    tl = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status.like('TL%')).all()
+    tl = session.query(Packages).filter(Packages.user_id == profile.id,
+                                        Packages.status.like('TL%')).all()
     ids_tl = list(map(lambda x: int(x.problem), tl))
-    ce = session.query(Packages).filter(Packages.user_id == profile.id, Packages.status == 'ce').all()
+    ce = session.query(Packages).filter(Packages.user_id == profile.id,
+                                        Packages.status == 'ce').all()
     ids_ce = list(map(lambda x: int(x.problem), ce))
     all_exceptions = ((set(ids_wa) | set(ids_ml) | set(ids_tl) | set(ids_ce))) - ids_accept
     print(ids_wa, wa, all_exceptions, ids_accept)
-    return render_template("profile.html", profile=profile, ids_accept=ids_accept, ids_wa=ids_wa, all_exceptions=all_exceptions,
-                                            ids_ml=ids_ml, ids_tl=ids_tl, ids_ce=ids_ce)
+    return render_template("profile.html", profile=profile, ids_accept=ids_accept, ids_wa=ids_wa,
+                           all_exceptions=all_exceptions,
+                           ids_ml=ids_ml, ids_tl=ids_tl, ids_ce=ids_ce)
 
 
 @app.route("/profile/<nickname>/all_packeges/")
@@ -341,7 +352,7 @@ def users_packeges(nickname):
     for el in reversed(users_packages):
         user_id = el.user_id
         user_name = el.user_name
-        
+
         content.append((el.id, user_name, el.problem, el.lan, el.status, user_id))
     return render_template("status.html", content=content)
 
@@ -359,9 +370,7 @@ def change_status(nickname):
 
 @app.route('/status_reload', methods=['POST'])
 def status_reload():
-    data = json.loads(request.data)  # idшники
-    # TODO: В массиве записаны id статусов, которые нужно достать из БД
-    #  и затем вернуть из функции список [{'id': id, 'status': status}, ...] закодированный в json
+    data = json.loads(request.data)
     session = create_session()
     data = data['id']
     response = {'data': []}
@@ -371,7 +380,6 @@ def status_reload():
             'status': str(session.query(Packages).filter(Packages.id == int(id_pos)).first().status)
         }
         response['data'].append(a)
-        # return json.dumps({'data': [{'id': '75', 'status': 'ac'}, {'id': '73', 'status': 'WA'}]})  # пример
     print(response)
     return json.dumps(response)
 
@@ -379,6 +387,7 @@ def status_reload():
 @app.errorhandler(404)
 def payme(e):
     return """<h1> Someting went wrong </h1>"""
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=40000)
