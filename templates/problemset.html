@@ -23,5 +23,10 @@
             {% endfor %}
         </table>
 
+{% endblock %}
 
+{% block admin %}
+    {% if current_user.is_authenticated and current_user.role == 1 %}
+    <li><a class="menu-element" href="/add">Add Task</a></li>
+    {% endif %}
 {% endblock %}

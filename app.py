@@ -95,23 +95,6 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route("/test-problem/")
-def test_problem():
-    print(Problem.query.all())
-    return f"{Problem.query.all()}"
-
-
-@app.route("/test-add/")
-def test_add():
-    task = Packages(name="AU", status="Ok")
-
-    session = create_session()
-    session.add(task)
-    session.commit()
-    print(task.id)
-    return redirect("/")
-
-
 @app.route('/status/')
 def status():
     session = create_session()
@@ -172,7 +155,7 @@ def problemset_num(num):
         print("#####!!!", id_status)
         problem = session.query(Problem).filter(Problem.id == n).first()
         test = Test(tl_time=problem.time, ml_memory=problem.memory)
-        # TODO: REFACTOR THIS PART OF CODE
+        
         if lan == "cpp":
             test.create_file(request.form["textarea"], f'source/{id_status}.cpp')
             if test.compile_С(f"source/{id_status}.cpp", f"programms/{id_status}"):
@@ -220,12 +203,15 @@ def problemset_num(num):
             test.delete_file(f"source/{id_status}.pas")
             test.delete_file(f"programms/{id_status}")
             test.delete_file(f'programms/{id_status}.o')
-        #####################################################
+        
         return redirect('/status/')
 
 
 @app.route('/add/', methods=["POST", 'GET'])
+@login_required
 def add():
+    if current_user.role == 0:
+        abort(404)
     form = AddProblem()
     if form.validate_on_submit():
         title = form.title.data
@@ -263,8 +249,8 @@ def add():
 @app.route('/edit/<int:num>/', methods=['POST', 'GET'])
 @login_required
 def edit(num):
-    if current_user.role != 1:
-        return redirect('/')
+    if current_user.role == 0:
+        abort(404)
     form = AddProblem()
     session = create_session()
     problem = session.query(Problem).filter(Problem.id == num).first()
@@ -357,6 +343,17 @@ def users_packeges(nickname):
     return render_template("status.html", content=content)
 
 
+@app.route("/change_status/<nickname>")
+@login_required
+def change_status(nickname):
+    session = create_session()
+    profile = session.query(User).filter(User.nickname == nickname).first()
+    if current_user.role == 1 and current_user.id != profile.id:
+        profile.role = (profile.role + 1) % 2
+        session.commit()
+    return redirect(f"/profile/{nickname}")
+
+
 @app.route('/status_reload', methods=['POST'])
 def status_reload():
     data = json.loads(request.data)  # idшники
@@ -375,6 +372,10 @@ def status_reload():
     print(response)
     return json.dumps(response)
 
+
+@app.errorhandler(404)
+def payme(e):
+    return """<h1> Someting went wrong </h1>"""
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=40000)

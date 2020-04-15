@@ -55,3 +55,13 @@
     </div>
 
 {% endblock %}
+
+{% block admin %}
+    {% if current_user.is_authenticated and current_user.id != profile.id and current_user.role == 1 %}
+    {% if profile.role == 0 %}
+    <li><a class="menu-element" href="/change_status/{{ profile.nickname }}">Set admin</a></li>
+    {% else %}
+    <li><a class="menu-element" href="/change_status/{{ profile.nickname }}">Set user</a></li>
+    {% endif %}
+    {% endif %}
+{% endblock %}
