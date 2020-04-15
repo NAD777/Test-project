@@ -1,7 +1,7 @@
 import json
 
 from flask import Flask, render_template, redirect, request, abort
-from read import get_tests
+from read import get_tests, remove_folder
 from main import Test
 from data.all_models import Problem, Packages, User
 from data.db_session import create_session, global_init
@@ -283,11 +283,14 @@ def edit(num):
 @app.route('/delete/<int:num>/', methods=['POST', 'GET'])
 @login_required
 def problem_delete(num):
+    if current_user.role == 0:
+        abort(404)
     session = create_session()
     problem = session.query(Problem).filter(Problem.id == num).first()
     if problem:
         session.delete(problem)
         session.commit()
+        remove_folder(f"problems/{num}")
     else:
         abort(404)
     return redirect(f"/problemset/list/1/")
