@@ -187,6 +187,10 @@ body{
     background-color: #d4edc9;
 }
 
+.unsolved {
+    background-color: #ffe3e3;
+}
+
 .table-problemset{
     margin: 5px auto 0;
     max-width: 100%;

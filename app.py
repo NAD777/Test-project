@@ -115,14 +115,24 @@ def problemset(num):
     n = int(num)
     session = create_session()
     if current_user.is_authenticated:
-        solved_by_user = [int(el.problem) for el in
+        solved_by_user = set(int(el.problem) for el in
                           session.query(Packages).filter(Packages.user_id == current_user.id,
-                                                         Packages.status == 'ac').all()]
+                                                         Packages.status == 'ac').all())
+        unsolved_by_user = set(int(el.problem) for el in
+                          session.query(Packages).filter(Packages.user_id == current_user.id,
+                                                         ((Packages.status.like('WA%')) | 
+                                                         (Packages.status.like('ML%')) | 
+                                                         (Packages.status.like('TL%')) | 
+                                                         (Packages.status == 'ce'))).all())
+        unsolved_by_user = unsolved_by_user - solved_by_user
+        print(unsolved_by_user)
     else:
         solved_by_user = []
+        unsolved_by_user = []
     arr = session.query(Problem).all()[(n - 1) * COL_PROBLEMS_ONE_PAGE:n * COL_PROBLEMS_ONE_PAGE]
     content = [(el.id, el.title, el.difficulty) for el in arr]
-    return render_template("problemset.html", content_table=content, solved_by_user=solved_by_user)
+    return render_template("problemset.html", content_table=content, solved_by_user=solved_by_user,
+                           unsolved_by_user=unsolved_by_user)
 
 
 @app.route('/problemset/<num>/', methods=['POST', 'GET'])
