@@ -32,7 +32,7 @@ class UsersResource(Resource):
         ce = session.query(Packages).filter(Packages.user_id == user.id, Packages.status == 'ce').all()
         ids_ce = list(map(lambda x: int(x.problem), ce))
         
-        all_exceptions = (set(ids_wa) | set(ids_ml) | set(ids_tl) | set(ids_ce)) ^ ids_accept
+        all_exceptions = (set(ids_wa) | set(ids_ml) | set(ids_tl) | set(ids_ce)) - ids_accept
 
         nickname = user.nickname
         email = user.email
