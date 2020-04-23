@@ -6,17 +6,30 @@ from main import Test
 from data.all_models import Problem, Packages, User
 from data.db_session import create_session, global_init
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from data.forms import RegisterForm, LoginForm, AddProblem
+from data.forms import RegisterForm, LoginForm, AddProblem, SendProgram
 from werkzeug.utils import secure_filename
 from flask_restful import Api
 import users_resource
+from flask_codemirror import CodeMirror
 
 import os
 
 COL_PROBLEMS_ONE_PAGE = 30
 
+# codemirror
+
+CODEMIRROR_LANGUAGES = ["clike", "python", "pascal"]
+WTF_CSRF_ENABLED = True
+SECRET_KEY = 'secret'
+
+# CODEMIRROR_THEME = '3024-day'
+#
+
 app = Flask(__name__)
+app.config.from_object(__name__)
 api = Api(app)
+
+codemirror = CodeMirror(app)
 
 api.add_resource(users_resource.UsersResource, '/api/users/<string:user_name>')
 
@@ -138,6 +151,7 @@ def problemset(num):
 def problemset_num(num):
     n = int(num)
     session = create_session()
+    form = SendProgram()
     if request.method == 'GET':
         # problem = Problem.query.filter_by(id=n).first()
         problem = session.query(Problem).filter(Problem.id == n).first()
@@ -154,14 +168,15 @@ def problemset_num(num):
             "output": problem.output,
             "examples": get_tests(col=int(problem.col_examples), dir=num)
         }
-        return render_template("problem.html", data=content)
+        return render_template("problem.html", data=content, form=form)
     elif request.method == 'POST':
         # print(request.form['textarea'])        
-        lan = request.form['lan']
+        lan = form.category.data
         user_name = current_user.nickname
         user_id = current_user.id
+        code = form.source_code.data
         status = Packages(user_name=user_name, status="comp", problem=num, lan=lan,
-                          code=request.form["textarea"], user_id=user_id)
+                          code=code, user_id=user_id)
         session.add(status)
         session.commit()
         id_status = status.id
@@ -170,7 +185,7 @@ def problemset_num(num):
         test = Test(tl_time=problem.time, ml_memory=problem.memory)
 
         if lan == "cpp":
-            test.create_file(request.form["textarea"], f'source/{id_status}.cpp')
+            test.create_file(code, f'source/{id_status}.cpp')
             if test.compile_С(f"source/{id_status}.cpp", f"programms/{id_status}"):
                 # status = Packages.query.filter_by(id=id_status).first()
                 status = session.query(Packages).filter(Packages.id == id_status).first()
@@ -193,7 +208,7 @@ def problemset_num(num):
             test.delete_file(f"source/{id_status}.cpp")
             test.delete_file(f"programms/{id_status}")
         elif lan == "pas":
-            test.create_file(request.form["textarea"], f'source/{id_status}.pas')
+            test.create_file(code, f'source/{id_status}.pas')
             if test.compile_pas(f"source/{id_status}.pas", f"programms/{id_status}"):
                 status = session.query(Packages).filter(Packages.id == id_status).first()
                 status.status = "run"

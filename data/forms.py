@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, \
-    TextAreaField, MultipleFileField
+    TextAreaField, MultipleFileField, SelectField
 from wtforms.validators import DataRequired
 from wtforms.fields.html5 import EmailField
 from flask_wtf.file import FileField, FileRequired
+from flask_codemirror.fields import CodeMirrorField
 
 
 class RegisterForm(FlaskForm):
@@ -33,3 +34,11 @@ class AddProblem(FlaskForm):
     files = MultipleFileField()
     col_examples = IntegerField('Col examples', validators=[DataRequired()])
     submit = SubmitField('Add')
+
+
+class SendProgram(FlaskForm):
+    source_code = CodeMirrorField(language='python',
+                                config={'lineNumbers' : 'true'})
+    
+    category = SelectField(choices=[('cpp', 'C++'), ('pas', 'Pascal ABC')])
+    submit = SubmitField('Отправить')
