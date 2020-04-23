@@ -125,7 +125,6 @@ def problemset(num):
                                                          (Packages.status.like('TL%')) | 
                                                          (Packages.status == 'ce'))).all())
         unsolved_by_user = unsolved_by_user - solved_by_user
-        print(unsolved_by_user)
     else:
         solved_by_user = []
         unsolved_by_user = []
@@ -304,8 +303,13 @@ def problem_delete(num):
     problem = session.query(Problem).filter(Problem.id == num).first()
     if problem:
         session.delete(problem)
+
+        del_status = session.query(Packages).filter(Packages.problem == str(num)).all()
+        for packege in del_status:
+            session.delete(packege)
         session.commit()
         remove_folder(f"problems/{num}")
+
     else:
         abort(404)
     return redirect(f"/problemset/list/1/")
