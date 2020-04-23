@@ -60,6 +60,6 @@
 {% block admin %}
     {% if current_user.is_authenticated and current_user.role == 1 %}
     <li><a class="menu-element" href="/edit/{{ data.id }}/">Change task</a></li>
-    <li><a class="menu-element" onclick="return confirm('Удалить файл?')" href="/delete/{{ data.id }}/">Delete task</a></li>
+    <li><a class="menu-element" onclick="return confirm('Удалить задачу?')" href="/delete/{{ data.id }}/">Delete task</a></li>
     {% endif %}
 {% endblock %}
