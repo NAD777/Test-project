@@ -1,6 +1,6 @@
 aniso8601==8.0.0
 astroid==2.2.5
-Babel==2.7.0
+Babel==2.9.1
 captcha==0.3
 Click==7.0
 entrypoints==0.3
